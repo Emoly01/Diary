@@ -1,0 +1,20 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-26T22:27:00Z"},
+  "title": "Sticker Journal",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 470, "y": 0, "w": 1440, "h": 1000, "title": "A · Ink desk — today's page", "expand": "fill"},
+    "SignIn.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "Sign in", "is_interactive": true},
+    "Catch.dc.html": {"x": 1990, "y": 0, "w": 390, "h": 844, "title": "Catch (phone)", "is_interactive": true},
+    "DeskKraft.dc.html": {"x": 470, "y": 1460, "w": 1440, "h": 1000, "title": "B · Kraft & ink — junk journal", "expand": "fill"},
+    "DeskPastel.dc.html": {"x": 1990, "y": 1460, "w": 1440, "h": 1000, "title": "C · Pastel planner", "expand": "fill"}
+  },
+  "order": ["Main.dc.html", "SignIn.dc.html", "Catch.dc.html", "DeskKraft.dc.html", "DeskPastel.dc.html"],
+  "notes": {
+    "flowtitle": {"x": 0, "y": -300, "text": "Daybook — sign in, write at the desk, catch on the phone", "kind": "title1", "maxW": 2380},
+    "optionstitle": {"x": 470, "y": 1160, "text": "Two other directions for the desk", "kind": "title1", "maxW": 2960}
+  },
+  "designSystems": []
+}

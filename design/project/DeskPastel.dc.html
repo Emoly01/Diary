@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Daybook — pastel planner desk</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&amp;family=Nunito:wght@400..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2E2A3B}a:hover{color:#9E2456}
+</style>
+</helmet>
+<div style="box-sizing: border-box; width: 100%; min-height: 100vh; background-color: {{desk}}; background-image: radial-gradient(rgba(255,255,255,0.95) 1.6px, transparent 2.2px); background-size: 30px 30px; color: #2E2A3B; font-family: 'Nunito', system-ui, sans-serif; padding: 20px 32px 56px; display: flex; flex-direction: column; gap: 24px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <span aria-hidden="true" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; box-sizing: border-box; border-radius: 999px; background: #FF9EC0; border: 3px solid #FFFFFF; box-shadow: 0 3px 8px rgba(94,72,140,0.2); transform: rotate(-8deg)">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#FFFFFF"></path></svg>
+      </span>
+      <span style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em">Daybook</span>
+    </div>
+    <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 6px; font-family: 'Fredoka', system-ui, sans-serif; font-size: 16px; font-weight: 500">
+      <a href="#" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 2px 0 rgba(94,72,140,0.1); text-decoration: none">Today</a>
+      <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; text-decoration: none">Pages</a>
+      <a href="#" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; text-decoration: none">Search</a>
+    </nav>
+    <button type="button" aria-label="Account" style="width: 44px; height: 44px; border-radius: 999px; border: 3px solid #FFFFFF; background: #9ED9C5; color: #2E2A3B; font-family: 'Fredoka', system-ui, sans-serif; font-weight: 600; font-size: 18px; box-shadow: 0 2px 6px rgba(94,72,140,0.2); cursor: pointer">E</button>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+    <aside aria-labelledby="pa-tray-heading" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+        <h2 id="pa-tray-heading" style="margin: 0; font-family: 'Fredoka', system-ui, sans-serif; font-size: 23px; font-weight: 600">Scrap tray</h2>
+        <span style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #5F5873">this week · 6</span>
+      </div>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5F5873">Caught on your phone. Pop one onto the page to write it up.</p>
+
+      <article style="background: #D4F3E6; color: #2E2A3B; border-radius: 12px; padding: 12px 16px 14px; transform: rotate(-0.9deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Mon · 14:10</div>
+        <p style="margin: 4px 0 8px; font-size: 16px; line-height: 1.45">finally ate lunch. cold pasta, zero regrets</p>
+        <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 7px; border-radius: 999px; background: #FFFFFF; font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #9E2456">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"></path></svg>
+          on today's page
+        </span>
+      </article>
+
+      <article style="background: #FFF1B8; color: #2E2A3B; border-radius: 12px; padding: 12px 16px 14px; transform: rotate(0.8deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Mon · 16:45 · 1 photo</div>
+        <p style="margin: 4px 0 8px; font-size: 16px; line-height: 1.45">sky over the parking garage. unreal.</p>
+        <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 7px; border-radius: 999px; background: #FFFFFF; font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #9E2456">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"></path></svg>
+          on today's page
+        </span>
+      </article>
+
+      <article style="background: #FFDCE8; color: #2E2A3B; border-radius: 12px; padding: 12px 16px 14px; transform: rotate(-0.5deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Mon · 21:30</div>
+        <p style="margin: 4px 0 8px; font-size: 16px; line-height: 1.45">tea. blanket. done.</p>
+        <span style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 7px; border-radius: 999px; background: #FFFFFF; font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 600; color: #9E2456">
+          <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"></path></svg>
+          on today's page
+        </span>
+      </article>
+
+      <article style="position: relative; background: #FFFFFF; color: #2E2A3B; border-radius: 12px; padding: 12px 60px 14px 16px; transform: rotate(0.9deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Sun · 11:02</div>
+        <p style="margin: 4px 0 0; font-size: 16px; line-height: 1.45">farmers market. bought way too many apples.</p>
+        <button type="button" aria-label="Add to page: farmers market" style="position: absolute; top: 50%; right: 10px; margin-top: -22px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 0; background: #C2386B; color: #FFFFFF; cursor: pointer; box-shadow: 0 3px 0 #9E2456">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+      </article>
+
+      <article style="position: relative; background: #FFFFFF; color: #2E2A3B; border-radius: 12px; padding: 12px 60px 14px 16px; transform: rotate(-0.7deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Sat · 23:40</div>
+        <p style="margin: 4px 0 0; font-size: 16px; line-height: 1.45">session ran long. party adopted a goose.</p>
+        <button type="button" aria-label="Add to page: session ran long" style="position: absolute; top: 50%; right: 10px; margin-top: -22px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 0; background: #C2386B; color: #FFFFFF; cursor: pointer; box-shadow: 0 3px 0 #9E2456">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+      </article>
+
+      <article style="position: relative; background: #FFFFFF; color: #2E2A3B; border-radius: 12px; padding: 12px 60px 14px 16px; transform: rotate(0.6deg); box-shadow: 0 6px 14px rgba(94,72,140,0.16)">
+        <div style="font-family: 'Fredoka', system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #5F5873">Thu · 06:15</div>
+        <p style="margin: 4px 0 0; font-size: 16px; line-height: 1.45">fog on the drive in, like driving through milk.</p>
+        <button type="button" aria-label="Add to page: fog on the drive in" style="position: absolute; top: 50%; right: 10px; margin-top: -22px; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 0; background: #C2386B; color: #FFFFFF; cursor: pointer; box-shadow: 0 3px 0 #9E2456">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+      </article>
+
+      <a href="#" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-family: 'Fredoka', system-ui, sans-serif; font-size: 15px; font-weight: 600; text-decoration: none">
+        Older scraps
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+      </a>
+    </aside>
+
+    <section aria-label="Today's page" style="flex: 999 1 560px; min-width: 0; padding-left: 18px; box-sizing: border-box">
+      <div style="position: relative; box-sizing: border-box; min-height: 780px; background-color: #FFFFFF; background-image: linear-gradient(rgba(194,56,107,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(194,56,107,0.09) 1px, transparent 1px); background-size: 22px 22px; color: #2E2A3B; border-radius: 24px; padding: 52px 52px 32px 64px; box-shadow: 0 2px 0 rgba(94,72,140,0.08), 0 24px 48px rgba(94,72,140,0.2); display: flex; flex-direction: column; gap: 22px">
+
+        <div aria-hidden="true" style="position: absolute; top: 40px; bottom: 40px; left: -20px; display: flex; flex-direction: column; justify-content: space-between">
+          <sc-for list="{{rings}}" as="ring" hint-placeholder-count="16">
+            <span style="display: block; width: 46px; height: 12px; border-radius: 999px; background: #D5CEEA; border: 2px solid #FFFFFF; box-shadow: 0 2px 3px rgba(94,72,140,0.25)"></span>
+          </sc-for>
+        </div>
+
+        <div aria-hidden="true" style="position: absolute; top: -12px; left: 80px; width: 130px; height: 30px; background-color: rgba(255,158,192,0.8); background-image: radial-gradient(rgba(255,255,255,0.95) 2.5px, transparent 3px); background-size: 12px 12px; border-radius: 3px; transform: rotate(-4deg)"></div>
+        <div aria-hidden="true" style="position: absolute; top: -10px; right: 60px; width: 104px; height: 28px; background-color: rgba(255,255,255,0.6); background-image: repeating-linear-gradient(0deg, rgba(158,217,197,0.6) 0 6px, transparent 6px 12px), repeating-linear-gradient(90deg, rgba(158,217,197,0.6) 0 6px, transparent 6px 12px); border-radius: 3px; transform: rotate(5deg)"></div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px; background: #FFD3E2; font-family: 'Fredoka', system-ui, sans-serif; font-size: 16px; font-weight: 600">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#C2386B"></path></svg>
+            Monday · 26 October 2026
+          </span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-family: 'Fredoka', system-ui, sans-serif">
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px 4px 6px; background: #FFE38A; border: 3px solid #FFFFFF; border-radius: 999px; box-shadow: 0 3px 6px rgba(94,72,140,0.2); font-size: 14px; font-weight: 600; transform: rotate(3deg)">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#FFFFFF"></circle><circle cx="9" cy="10" r="1.4" fill="#2E2A3B"></circle><circle cx="15" cy="10" r="1.4" fill="#2E2A3B"></circle><path d="M8 14q4 4 8 0" fill="none" stroke="#2E2A3B" stroke-width="1.6" stroke-linecap="round"></path><circle cx="6.5" cy="13" r="1.5" fill="#FF9EC0"></circle><circle cx="17.5" cy="13" r="1.5" fill="#FF9EC0"></circle></svg>
+              mood: good
+            </span>
+            <span style="display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 999px; background: #D4F3E6; font-size: 13px; font-weight: 500">3 scraps</span>
+          </div>
+        </div>
+
+        <h1 style="margin: 0; font-family: 'Fredoka', system-ui, sans-serif; font-size: 48px; font-weight: 600; line-height: 1.05; letter-spacing: -0.01em">Cold pasta, warm sky</h1>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+          <div style="flex: 3 1 320px; min-width: 0; font-size: 18px; line-height: 1.75">
+            <p style="margin: 0 0 16px">Finally ate lunch at ten past two. Cold pasta, zero regrets. Some days the bar is on the floor and I step over it like a champion.</p>
+            <p style="margin: 0 0 16px">Walking out, the sky over the parking garage went full peach and violet. I stood there way too long with my keys in my hand, just looking.</p>
+            <p style="margin: 0">Home. Tea. Blanket. Done. Tomorrow is tomorrow's problem.<span aria-hidden="true" style="display: inline-block; width: 3px; height: 1.1em; margin-left: 3px; border-radius: 2px; background: #C2386B; vertical-align: -0.18em"></span></p>
+          </div>
+
+          <div style="flex: 2 1 280px; min-width: 0; position: relative; height: 440px">
+            <figure style="position: absolute; top: 22px; left: 4%; width: 230px; margin: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 14px; padding: 10px 10px 12px; transform: rotate(-3deg); box-shadow: 0 2px 0 rgba(94,72,140,0.08), 0 12px 24px rgba(94,72,140,0.22)">
+              <svg viewBox="0 0 200 160" width="210" height="168" role="img" aria-label="Photo placeholder: sunset over the parking garage" style="display: block; width: 100%; height: auto; border-radius: 8px">
+                <rect x="0" y="0" width="200" height="62" fill="#C9B8F5"></rect>
+                <rect x="0" y="62" width="200" height="26" fill="#FFB8CF"></rect>
+                <rect x="0" y="88" width="200" height="72" fill="#FFD6B8"></rect>
+                <circle cx="152" cy="100" r="20" fill="#FFE38A"></circle>
+                <rect x="0" y="96" width="124" height="64" fill="#8C7FB0"></rect>
+                <rect x="124" y="118" width="76" height="42" fill="#8C7FB0"></rect>
+                <rect x="0" y="114" width="124" height="3" fill="#A396C7"></rect>
+                <rect x="0" y="134" width="124" height="3" fill="#A396C7"></rect>
+              </svg>
+              <figcaption style="margin-top: 8px; font-family: 'Fredoka', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #5F5873">parking garage · 16:45</figcaption>
+            </figure>
+            <div aria-hidden="true" style="position: absolute; top: 8px; left: calc(4% + 74px); width: 90px; height: 26px; background-color: rgba(201,184,245,0.85); background-image: radial-gradient(rgba(255,255,255,0.95) 2.5px, transparent 3px); background-size: 12px 12px; border-radius: 3px; transform: rotate(4deg)"></div>
+
+            <svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true" style="position: absolute; top: 0; right: 0; transform: rotate(10deg); filter: drop-shadow(0 4px 4px rgba(94,72,140,0.25))">
+              <path d="M20 70C20 52 25 41 30 35L27 14L45 27C48 26.5 52 26.5 55 27L73 14L70 35C75 41 80 52 80 70C80 83 66 89 50 89C34 89 20 83 20 70Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path>
+              <path d="M20 70C20 52 25 41 30 35L27 14L45 27C48 26.5 52 26.5 55 27L73 14L70 35C75 41 80 52 80 70C80 83 66 89 50 89C34 89 20 83 20 70Z" fill="#FFC9A8"></path>
+              <path d="M31 31L30 20L40 28Z" fill="#FF9EC0"></path>
+              <path d="M69 31L70 20L60 28Z" fill="#FF9EC0"></path>
+              <ellipse cx="39" cy="57" rx="3.6" ry="5" fill="#2E2A3B"></ellipse>
+              <ellipse cx="61" cy="57" rx="3.6" ry="5" fill="#2E2A3B"></ellipse>
+              <circle cx="40.5" cy="55" r="1.3" fill="#FFFFFF"></circle>
+              <circle cx="62.5" cy="55" r="1.3" fill="#FFFFFF"></circle>
+              <circle cx="31" cy="68" r="5" fill="#FF9EC0"></circle>
+              <circle cx="69" cy="68" r="5" fill="#FF9EC0"></circle>
+              <path d="M44 69q3 4 6 0q3 4 6 0" fill="none" stroke="#2E2A3B" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+
+            <svg viewBox="0 0 100 100" width="60" height="60" aria-hidden="true" style="position: absolute; top: 230px; left: calc(4% + 196px); transform: rotate(-14deg); filter: drop-shadow(0 4px 4px rgba(94,72,140,0.25))">
+              <path d="M50 84C20 64 12 48 16 36C20 22 38 18 50 32C62 18 80 22 84 36C88 48 80 64 50 84Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path>
+              <path d="M50 84C20 64 12 48 16 36C20 22 38 18 50 32C62 18 80 22 84 36C88 48 80 64 50 84Z" fill="#FF9EC0"></path>
+              <ellipse cx="30" cy="38" rx="7" ry="4.5" fill="#FFFFFF" fill-opacity="0.7" transform="rotate(-30 30 38)"></ellipse>
+            </svg>
+
+            <svg viewBox="0 0 100 100" width="108" height="108" aria-hidden="true" style="position: absolute; bottom: 18px; left: 0; transform: rotate(-8deg); filter: drop-shadow(0 4px 4px rgba(94,72,140,0.25))">
+              <g fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
+                <path d="M24 42h44v12c0 13-10 23-22 23s-22-10-22-23z"></path>
+                <path d="M68 47h5a8 8 0 0 1 0 16h-6" fill="none"></path>
+                <rect x="14" y="76" width="64" height="9" rx="4.5"></rect>
+                <path d="M38 32c-4-5 4-8 0-14M52 32c-4-5 4-8 0-14" fill="none"></path>
+              </g>
+              <path d="M24 42h44v12c0 13-10 23-22 23s-22-10-22-23z" fill="#9ED9C5"></path>
+              <ellipse cx="46" cy="43" rx="21" ry="3.5" fill="#E8B48A"></ellipse>
+              <path d="M68 47h5a8 8 0 0 1 0 16h-6" fill="none" stroke="#9ED9C5" stroke-width="5" stroke-linecap="round"></path>
+              <rect x="14" y="76" width="64" height="9" rx="4.5" fill="#7CC4AC"></rect>
+              <path d="M38 32c-4-5 4-8 0-14M52 32c-4-5 4-8 0-14" fill="none" stroke="#9ED9C5" stroke-width="4" stroke-linecap="round"></path>
+              <circle cx="38" cy="58" r="2" fill="#2E2A3B"></circle>
+              <circle cx="54" cy="58" r="2" fill="#2E2A3B"></circle>
+              <path d="M42 63q4 3 8 0" fill="none" stroke="#2E2A3B" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+
+            <span style="position: absolute; bottom: 84px; right: 4%; display: inline-flex; align-items: center; padding: 6px 18px; background: #C9B8F5; color: #2E2A3B; border: 4px solid #FFFFFF; border-radius: 22px 22px 22px 6px; box-shadow: 0 4px 6px rgba(94,72,140,0.22); font-family: 'Fredoka', system-ui, sans-serif; font-weight: 600; font-size: 21px; transform: rotate(-6deg)">good day!</span>
+
+            <svg viewBox="0 0 100 100" width="66" height="66" aria-hidden="true" style="position: absolute; bottom: 4px; right: 30%; transform: rotate(12deg); filter: drop-shadow(0 4px 4px rgba(94,72,140,0.25))">
+              <path d="M50 14L60 38.3L86.1 40.3L66.2 57.3L72.3 82.7L50 69L27.7 82.7L33.8 57.3L13.9 40.3L40 38.3Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path>
+              <path d="M50 14L60 38.3L86.1 40.3L66.2 57.3L72.3 82.7L50 69L27.7 82.7L33.8 57.3L13.9 40.3L40 38.3Z" fill="#FFE38A" stroke="#FFE38A" stroke-width="4" stroke-linejoin="round"></path>
+              <circle cx="44" cy="50" r="2.6" fill="#2E2A3B"></circle>
+              <circle cx="56" cy="50" r="2.6" fill="#2E2A3B"></circle>
+              <path d="M45 57q5 4 10 0" fill="none" stroke="#2E2A3B" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="position: absolute; top: 210px; left: 2%"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#FFE38A" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="position: absolute; top: 124px; right: 6%"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#9ED9C5"></path></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="position: absolute; bottom: 150px; left: 38%"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#FF9EC0"></path></svg>
+          </div>
+        </div>
+
+        <div style="margin-top: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-family: 'Fredoka', system-ui, sans-serif; font-size: 13px; font-weight: 500; color: #5F5873">
+          <span>saved 23:21</span>
+          <span>62 words</span>
+        </div>
+      </div>
+    </section>
+
+    <aside aria-label="On this day and sticker sheet" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+
+      <section aria-labelledby="pa-otd-heading" style="background: #FFFFFF; border-radius: 20px; padding: 22px 20px 20px; box-shadow: 0 10px 24px rgba(94,72,140,0.16); display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+        <h2 id="pa-otd-heading" style="margin: 0; font-family: 'Fredoka', system-ui, sans-serif; font-size: 21px; font-weight: 600">On this day</h2>
+        <svg viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Calendar page: 26 October 2025" style="display: block">
+          <rect x="6" y="10" width="68" height="64" rx="12" fill="#FFFFFF" stroke="#E7E1F5" stroke-width="2"></rect>
+          <path d="M6 22a12 12 0 0 1 12-12h44a12 12 0 0 1 12 12v6H6z" fill="#FF9EC0"></path>
+          <rect x="22" y="4" width="5" height="12" rx="2.5" fill="#8C7FB0"></rect>
+          <rect x="53" y="4" width="5" height="12" rx="2.5" fill="#8C7FB0"></rect>
+          <text x="40" y="58" text-anchor="middle" fill="#2E2A3B" font-family="Fredoka, system-ui, sans-serif" font-size="26" font-weight="600">26</text>
+          <text x="40" y="69" text-anchor="middle" fill="#5F5873" font-family="Fredoka, system-ui, sans-serif" font-size="8" font-weight="600" letter-spacing="1">OCT 2025</text>
+        </svg>
+        <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5F5873">First year! Next October, tonight's page pops up right here.</p>
+      </section>
+
+      <section aria-labelledby="pa-drawer-heading" style="background: #FFFFFF; border-radius: 20px; padding: 18px; box-shadow: 0 10px 24px rgba(94,72,140,0.16); display: flex; flex-direction: column; gap: 14px">
+        <h2 id="pa-drawer-heading" style="margin: 0; font-family: 'Fredoka', system-ui, sans-serif; font-size: 21px; font-weight: 600">Sticker sheet</h2>
+        <div role="group" aria-label="Sticker sheet sections" style="display: flex; flex-wrap: wrap; gap: 6px; font-family: 'Fredoka', system-ui, sans-serif; font-size: 14px; font-weight: 500">
+          <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #2E2A3B; color: #FFFFFF; font: inherit; cursor: pointer">Stickers</button>
+          <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #F3EFFC; color: #2E2A3B; font: inherit; cursor: pointer">Washi</button>
+          <button type="button" aria-pressed="false" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: #F3EFFC; color: #2E2A3B; font: inherit; cursor: pointer">Mine</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+          <button type="button" aria-label="Add tea cup sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><g fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"><path d="M24 42h44v12c0 13-10 23-22 23s-22-10-22-23z"></path><path d="M68 47h5a8 8 0 0 1 0 16h-6" fill="none"></path><rect x="14" y="76" width="64" height="9" rx="4.5"></rect></g><path d="M24 42h44v12c0 13-10 23-22 23s-22-10-22-23z" fill="#9ED9C5"></path><path d="M68 47h5a8 8 0 0 1 0 16h-6" fill="none" stroke="#9ED9C5" stroke-width="5" stroke-linecap="round"></path><rect x="14" y="76" width="64" height="9" rx="4.5" fill="#7CC4AC"></rect></svg>
+          </button>
+          <button type="button" aria-label="Add cat sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M20 70C20 52 25 41 30 35L27 14L45 27C48 26.5 52 26.5 55 27L73 14L70 35C75 41 80 52 80 70C80 83 66 89 50 89C34 89 20 83 20 70Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path><path d="M20 70C20 52 25 41 30 35L27 14L45 27C48 26.5 52 26.5 55 27L73 14L70 35C75 41 80 52 80 70C80 83 66 89 50 89C34 89 20 83 20 70Z" fill="#FFC9A8"></path><ellipse cx="39" cy="57" rx="3.6" ry="5" fill="#2E2A3B"></ellipse><ellipse cx="61" cy="57" rx="3.6" ry="5" fill="#2E2A3B"></ellipse><circle cx="31" cy="68" r="5" fill="#FF9EC0"></circle><circle cx="69" cy="68" r="5" fill="#FF9EC0"></circle></svg>
+          </button>
+          <button type="button" aria-label="Add star sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M50 14L60 38.3L86.1 40.3L66.2 57.3L72.3 82.7L50 69L27.7 82.7L33.8 57.3L13.9 40.3L40 38.3Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path><path d="M50 14L60 38.3L86.1 40.3L66.2 57.3L72.3 82.7L50 69L27.7 82.7L33.8 57.3L13.9 40.3L40 38.3Z" fill="#FFE38A" stroke="#FFE38A" stroke-width="4" stroke-linejoin="round"></path></svg>
+          </button>
+          <button type="button" aria-label="Add heart sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M50 84C20 64 12 48 16 36C20 22 38 18 50 32C62 18 80 22 84 36C88 48 80 64 50 84Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path><path d="M50 84C20 64 12 48 16 36C20 22 38 18 50 32C62 18 80 22 84 36C88 48 80 64 50 84Z" fill="#FF9EC0"></path></svg>
+          </button>
+          <button type="button" aria-label="Add moon sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M60 14C36 16 20 36 22 58C24 80 46 92 68 86C50 80 40 64 42 48C44 32 52 20 60 14Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"></path><path d="M60 14C36 16 20 36 22 58C24 80 46 92 68 86C50 80 40 64 42 48C44 32 52 20 60 14Z" fill="#C9B8F5"></path></svg>
+          </button>
+          <button type="button" aria-label="Add yay speech bubble" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <span style="display: inline-block; padding: 2px 9px; background: #FFD3E2; color: #2E2A3B; border: 3px solid #FFFFFF; border-radius: 14px 14px 14px 4px; font-family: 'Fredoka', system-ui, sans-serif; font-weight: 600; font-size: 13px; transform: rotate(-6deg)">yay!</span>
+          </button>
+          <button type="button" aria-label="Add sparkle sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M12 2C13 9 15 11 22 12C15 13 13 15 12 22C11 15 9 13 2 12C9 11 11 9 12 2Z" fill="#FFE38A" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"></path></svg>
+          </button>
+          <button type="button" aria-label="Add rainbow sticker" style="height: 66px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 14px; border: 0; background: #F6F2FF; cursor: pointer">
+            <svg viewBox="0 0 60 40" width="48" height="32" aria-hidden="true" style="filter: drop-shadow(0 2px 2px rgba(94,72,140,0.25))"><path d="M8 34a22 22 0 0 1 44 0" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round"></path><path d="M10 34a20 20 0 0 1 40 0" fill="none" stroke="#FF9EC0" stroke-width="5" stroke-linecap="round"></path><path d="M16 34a14 14 0 0 1 28 0" fill="none" stroke="#FFE38A" stroke-width="5" stroke-linecap="round"></path><path d="M22 34a8 8 0 0 1 16 0" fill="none" stroke="#9ED9C5" stroke-width="5" stroke-linecap="round"></path></svg>
+          </button>
+        </div>
+
+        <button type="button" style="min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; border: 0; background: #C2386B; color: #FFFFFF; font-family: 'Fredoka', system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 3px 0 #9E2456">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+          Turn a photo into a sticker
+        </button>
+      </section>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"desk":{"editor":"color","default":"#EEE8FB","options":["#EEE8FB","#E2F5EE","#FFE9DE"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const desk = this.props.desk ?? '#EEE8FB';
+    const rings = [];
+    for (let i = 0; i < 16; i++) { rings.push({ i: i }); }
+    return { desk: desk, rings: rings };
+  }
+}
+</script>
+</body>
+</html>
