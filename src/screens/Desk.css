@@ -25,6 +25,91 @@
   padding: 4px 2px 16px;
 }
 
+.desk-tray,
+.desk-rail,
+.desk-panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.desk-phone-memories {
+  margin-top: 24px;
+}
+
+/* On this day */
+.otd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 20px 20px;
+  border-radius: 20px;
+  background: var(--page);
+  box-shadow: 0 10px 24px rgba(94, 72, 140, 0.16);
+  text-align: center;
+}
+
+.otd h2 {
+  font-size: 21px;
+}
+
+.otd-note {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.otd-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.otd-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: var(--tap);
+  padding: 12px 14px;
+  border-radius: var(--radius-card-sm);
+  background: var(--lilac-3);
+  text-decoration: none;
+}
+
+.otd-card:hover {
+  background: var(--pink-3);
+  color: var(--ink);
+}
+
+.otd-when {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.otd-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.otd-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
 .desk-page-col {
   flex: 1 1 auto;
   min-width: 0;
@@ -105,43 +190,6 @@
 .tray-add:active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 var(--accent-edge);
-}
-
-/* Tablet slide-over */
-.slide-over {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-}
-
-.slide-over-scrim {
-  position: absolute;
-  inset: 0;
-  background: rgba(46, 42, 59, 0.25);
-}
-
-.slide-over-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: min(360px, 90vw);
-  overflow-y: auto;
-  padding: 20px 20px 32px;
-  background: var(--desk);
-  box-shadow: var(--shadow-page);
-}
-
-.slide-over-right {
-  left: auto;
-  right: 0;
-}
-
-.slide-over-close {
-  float: right;
-  width: var(--tap);
-  padding: 0;
-  margin: -4px -4px 8px 8px;
 }
 
 /* Toolbar (outside the scaled page, so its buttons keep their 44 px) */
@@ -283,6 +331,7 @@ button.mood-chip {
 
 .desk-title {
   width: 100%;
+  margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
@@ -295,8 +344,9 @@ button.mood-chip {
 }
 
 .desk-title::placeholder {
+  /* Full ink-soft: faded placeholders fail the 4.5:1 contrast rule. */
   color: var(--ink-soft);
-  opacity: 0.6;
+  opacity: 1;
 }
 
 .desk-title:focus {
@@ -347,7 +397,6 @@ button.mood-chip {
 .page-body > p:only-child:has(> br.ProseMirror-trailingBreak)::before {
   content: 'Write about your day…';
   color: var(--ink-soft);
-  opacity: 0.6;
   pointer-events: none;
   float: left;
   height: 0;
@@ -376,9 +425,9 @@ button.mood-chip {
 }
 
 .sticker-hit {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 100%;
-  height: 100%;
   padding: 0;
   border: 0;
   background: none;

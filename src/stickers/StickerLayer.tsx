@@ -59,6 +59,9 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
   const { w, h } = baseSize(s);
   // Handles keep 44 screen px whatever the page's zoom.
   const handle = 44 / pageScale;
+  // Thin or tiny stickers (washi tape, a shrunk sparkle) get an invisible hit area of at least 44 px.
+  const padX = Math.max(0, (handle - w * s.scale) / 2);
+  const padY = Math.max(0, (handle - h * s.scale) / 2);
 
   const pick = () => {
     session.select(s.id);
@@ -178,6 +181,7 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
         className="sticker-hit"
         aria-label={stickerLabel(s)}
         aria-pressed={selected}
+        style={{ inset: `${-padY}px ${-padX}px`, padding: `${padY}px ${padX}px` }}
         {...bind()}
         onKeyDown={onKeyDown}
         // Tabbing to a sticker selects it, so keyboard users get its handles and options too.

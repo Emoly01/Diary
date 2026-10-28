@@ -3,7 +3,7 @@
 A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md);
 the design boards it builds from are exported in `design/project/`.
 
-**Status:** Phase 4 (stickers and washi tape). Built so far:
+**Status:** v1. All five phases are built:
 - **Phase 1:** Google sign-in, the owner lock, Firestore rules and tests, theme and fonts, the app shell.
 - **Phase 2:** quick capture at `/catch` (text, photo, mood) that works offline, the scrap tray on the
   desk, and installing as an app.
@@ -11,6 +11,8 @@ the design boards it builds from are exported in `design/project/`.
   the page (text as paragraphs, photos as polaroids), and the tablet and phone layouts.
 - **Phase 4:** the sticker sheet (eight presets, six washi tapes), photos added at the desk from
   the device or a pasted link, and drag, rotate, scale, delete and stacking order for every sticker.
+- **Phase 5:** On this day, the Pages archive with search, and the settings sheet (day start, export,
+  sign out).
 
 ## Run it locally
 
@@ -104,6 +106,20 @@ after you fill in the real one.
 - Removing a photo added at the desk deletes the stored picture too. Removing the polaroid of a
   filed scrap keeps the picture, because the scrap still uses it.
 - Pasted image links must be `https`, and they're loaded with `referrerpolicy="no-referrer"`.
+- **On this day** reads `pages/{same date}` for each of the last ten years: one direct read per
+  year, no query. Its cards open the page read-only (`/day/YYYY-MM-DD?read`).
+- **Pages and search:** the archive listens to the `pages` collection and shows this device's
+  offline copy at once, then the server's full list. Search is Fuse.js over titles and `plainText`,
+  on the device.
+- **Export** (Settings → Export everything) downloads one JSON file with settings and every page,
+  scrap and photo (base64 JPEG), with dates as ISO strings. If any of it came from the offline
+  copy, it says so.
+- **New scraps are also kept in a `localStorage` outbox** until Firestore confirms them. Firestore
+  takes a few milliseconds to record a write in its offline store; closing the app inside that
+  window used to lose a fresh scrap. On the next start, anything left in the outbox that isn't
+  in the book is written again under the same id. Edits and deletes don't have this cover: one
+  made in the last ~30 ms before the app closes may not stick. (Losing a new scrap loses writing;
+  losing an edit doesn't, so the extra machinery wasn't worth it.)
 - **Screen sizes:**
   - **1600 px and up:** tray, page and sticker sheet, side by side.
   - **1280–1599 px:** tray and page; the sticker sheet opens from the **Stickers** button. This

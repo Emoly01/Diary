@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import { CloseIcon, TrashIcon, TrayIcon } from '../components/Icons';
+import { TrashIcon, TrayIcon } from '../components/Icons';
+import SlideOver from '../components/SlideOver';
 import Sparkle from '../components/stickers/Sparkle';
 import { useOwner } from '../auth/AuthProvider';
-import { bookDay, isBookDay } from '../data/day';
+import { bookDay, formatDayLong, isBookDay } from '../data/day';
 import { PAGE_WIDTH } from '../data/pages';
 import StickerSheet from '../stickers/StickerSheet';
 import { stickerLabel } from '../stickers/StickerLayer';
@@ -12,6 +13,7 @@ import { usePageScraps, useTrayScraps } from '../data/scraps';
 import { useSettings } from '../data/settings';
 import DeskPage from '../desk/DeskPage';
 import EditorToolbar from '../desk/EditorToolbar';
+import OnThisDay from '../desk/OnThisDay';
 import Tray from '../desk/Tray';
 import { usePageSession } from '../desk/usePageSession';
 import { useBookStatus } from '../useBookStatus';
@@ -31,12 +33,36 @@ export default function Desk() {
   const day = params.day ?? today;
 
   // A fresh session per day: at 04:00, "/" rolls over to the new page.
-  return <DeskForDay key={day} uid={uid} day={day} isToday={day === today} timezone={settings.timezone} />;
+  return (
+    <DeskForDay
+      key={day}
+      uid={uid}
+      day={day}
+      isToday={day === today}
+      timezone={settings.timezone}
+      startedAt={settings.startedAt}
+    />
+  );
 }
 
-function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string; isToday: boolean; timezone: string }) {
+function DeskForDay({
+  uid,
+  day,
+  isToday,
+  timezone,
+  startedAt,
+}: {
+  uid: string;
+  day: string;
+  isToday: boolean;
+  timezone: string;
+  startedAt: Date | null;
+}) {
   const layout = useLayout();
-  const readOnly = layout === 'phone';
+  // `?read` (from On this day) opens a page to look at, not to edit.
+  const [params] = useSearchParams();
+  const reading = params.has('read');
+  const readOnly = layout === 'phone' || reading;
   // Below 1600 px the sheet slides over from the right, opened from the header.
   const sheetInRail = useSheetInRail();
   const sheetAsPanel = !readOnly && !sheetInRail;
@@ -84,6 +110,8 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
     />
   );
 
+  const memories = <OnThisDay uid={uid} day={day} isToday={isToday} startedAt={startedAt} />;
+
   const tray = (
     <Tray
       uid={uid}
@@ -121,15 +149,22 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
           The lock refused this account. Check the UID in firestore.rules.
         </p>
       )}
-      {readOnly && (
+      {layout === 'phone' ? (
         <p className="desk-banner">
           Reading only. Pages are written at the desk; on the phone, <Link to="/catch">catch a scrap</Link>.
         </p>
+      ) : (
+        reading && (
+          <p className="desk-banner">
+            You’re reading {formatDayLong(day)}. <Link to={`/day/${day}`}>Edit this page</Link>
+          </p>
+        )
       )}
 
       <main className="desk">
         {layout === 'desk' && (
           <aside className="desk-tray" aria-labelledby="tray-heading">
+            {!sheetInRail && memories}
             {tray}
           </aside>
         )}
@@ -157,12 +192,22 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
           <DeskPage uid={uid} day={day} session={session} timezone={timezone} readOnly={readOnly} pageRef={pageRef} />
         </section>
 
-        {layout === 'desk' && sheetInRail && <aside className="desk-rail">{sheet}</aside>}
+        {layout === 'desk' && sheetInRail && (
+          <aside className="desk-rail">
+            {memories}
+            {!readOnly && sheet}
+          </aside>
+        )}
       </main>
+
+      {layout === 'phone' && <div className="desk-phone-memories">{memories}</div>}
 
       {layout === 'tablet' && panel === 'tray' && (
         <SlideOver side="left" label="tray-heading" closeLabel="Close tray" onClose={() => setPanel(null)}>
-          {tray}
+          <div className="desk-panel-stack">
+            {memories}
+            {tray}
+          </div>
         </SlideOver>
       )}
       {sheetAsPanel && panel === 'sheet' && (
@@ -170,41 +215,6 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
           {sheet}
         </SlideOver>
       )}
-    </div>
-  );
-}
-
-/** Tablet: the tray slides in from the left, the sticker sheet from the right. */
-function SlideOver({
-  children,
-  side,
-  label,
-  closeLabel,
-  onClose,
-}: {
-  children: ReactNode;
-  side: 'left' | 'right';
-  label: string;
-  closeLabel: string;
-  onClose: () => void;
-}) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    closeRef.current?.focus();
-    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', esc);
-    return () => document.removeEventListener('keydown', esc);
-  }, [onClose]);
-
-  return (
-    <div className="slide-over" role="dialog" aria-modal="true" aria-labelledby={label}>
-      <div className="slide-over-scrim" onClick={onClose} />
-      <div className={`slide-over-panel slide-over-${side}`}>
-        <button ref={closeRef} type="button" className="btn btn-quiet slide-over-close" aria-label={closeLabel} onClick={onClose}>
-          <CloseIcon />
-        </button>
-        {children}
-      </div>
     </div>
   );
 }

@@ -112,10 +112,6 @@
 }
 
 /* Account */
-.account {
-  position: relative;
-}
-
 .account-button {
   width: var(--tap);
   height: var(--tap);
@@ -127,28 +123,6 @@
   font-size: 18px;
   box-shadow: 0 2px 6px rgba(94, 72, 140, 0.2);
   cursor: pointer;
-}
-
-.account-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 10px);
-  z-index: 10;
-  min-width: 240px;
-  padding: 16px;
-  border-radius: var(--radius-card);
-  background: var(--page);
-  box-shadow: var(--shadow-page);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.account-who {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  overflow-wrap: anywhere;
 }
 
 /* Journal page surface */
@@ -193,11 +167,4 @@
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: 500;
-}
-
-.placeholder-note {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.75;
-  color: var(--ink-soft);
 }

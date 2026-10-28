@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
+import { resendLostScraps } from '../data/scraps';
 import { useAuth } from './AuthProvider';
 import { firebaseConfigured } from '../firebase';
 import SignIn from '../screens/SignIn';
@@ -19,6 +20,14 @@ export default function RequireOwner({ children }: { children: ReactNode }) {
     case 'locked':
       return <Locked uid={state.uid} />;
     case 'owner':
-      return <>{children}</>;
+      return <OwnerStart uid={state.user.uid}>{children}</OwnerStart>;
   }
+}
+
+/** Runs once the owner is in: re-sends any scrap that was lost on close. */
+function OwnerStart({ uid, children }: { uid: string; children: ReactNode }) {
+  useEffect(() => {
+    void resendLostScraps(uid);
+  }, [uid]);
+  return <>{children}</>;
 }
