@@ -3,8 +3,10 @@
 A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md);
 the design boards it builds from are exported in `design/project/`.
 
-**Status:** Phase 1 (foundation): Google sign-in, owner lock, Firestore rules and tests,
-theme and fonts, app shell.
+**Status:** Phase 2 (Catch). Built so far:
+- **Phase 1:** Google sign-in, the owner lock, Firestore rules and tests, theme and fonts, the app shell.
+- **Phase 2:** quick capture at `/catch` (text, photo, mood) that works offline, the scrap tray on the
+  desk, and installing as an app.
 
 ## Run it locally
 
@@ -16,10 +18,17 @@ npm run dev
 
 | Script | What it does |
 | --- | --- |
-| `npm run dev` | Vite dev server |
-| `npm run build` | Typecheck and production build into `dist/` |
+| `npm run dev` | Vite dev server against the real Firebase project in `.env.local` |
+| `npm run build` | Typecheck and production build into `dist/` (includes the service worker) |
 | `npm run typecheck` | TypeScript only |
+| `npm test` | Unit tests (`src/**/*.test.ts`), e.g. the 04:00 day rollover |
 | `npm run test:rules` | Starts the Firestore emulator and runs `tests/rules.test.ts` (needs Java 11+) |
+| `npm run emulators` | Starts the Auth and Firestore emulators for local dev |
+| `npm run dev:emulator` | Dev server against those emulators (settings in `.env.emulator`) |
+
+With the emulators, the Google pop-up signs you in as a fake emulator account. That account is
+locked out unless it has the owner UID. Create one from the browser console with
+`daybookEmulatorSignIn('<uid>')`, which exists only in emulator builds.
 
 The rules tests use whatever UID is written in `firestore.rules`, so they run before and
 after you fill in the real one.
@@ -70,3 +79,19 @@ after you fill in the real one.
   into two registries ("Service firestore is not available"). Drop the overrides when
   upgrading Firebase and check that `npm ls @firebase/app` shows a single version.
 - No analytics, no third-party scripts. Fonts are self-hosted via `@fontsource`.
+- Two requests to Google hosts come from the Firebase SDK itself:
+  - `apis.google.com/js/api.js`: Firebase Auth's pop-up helper, loaded when you sign in.
+  - `www.google.com/images/cleardot.gif`: Firestore's connectivity probe, sent while the
+    network is down.
+- The photo compressor's web worker script is served from the app (see `src/data/photos.ts`).
+  Without that, `browser-image-compression` loads it from `cdn.jsdelivr.net`.
+- Scrap lists are sorted on the device, so Firestore needs no composite indexes.
+
+## Installing on a phone
+
+Open the site in the phone's browser and sign in once.
+- **iPhone (Safari):** Share → Add to Home Screen.
+- **Android (Chrome):** menu (⋮) → Install app.
+
+The installed app opens at Catch and works with no signal. Scraps and photos caught offline
+sync the next time there's a connection; until then they show "not synced yet".

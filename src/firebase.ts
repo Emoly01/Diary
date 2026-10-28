@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { connectAuthEmulator, getAuth, GoogleAuthProvider, signInWithCustomToken } from 'firebase/auth';
 import {
+  connectFirestoreEmulator,
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
@@ -37,3 +38,26 @@ googleProvider.setCustomParameters({ prompt: 'select_account' });
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 });
+
+// Local development against the Firebase emulators (`npm run emulators`,
+// then `npm run dev:emulator`). Never set in production.
+if (import.meta.env.VITE_USE_EMULATORS === '1') {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+
+  // Test hook: sign in as any emulator user without the Google popup. The
+  // auth emulator accepts unsigned custom tokens. Stripped from real builds.
+  const b64 = (o: object) => btoa(JSON.stringify(o)).replace(/=+$/, '');
+  const AUD = 'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit';
+  window.daybookEmulatorSignIn = (uid: string) => {
+    const iat = Math.floor(Date.now() / 1000);
+    const claims = { aud: AUD, iat, exp: iat + 3600, iss: 'emulator', sub: 'emulator', uid };
+    return signInWithCustomToken(auth, `${b64({ alg: 'none', typ: 'JWT' })}.${b64(claims)}.`).then(() => {});
+  };
+}
+
+declare global {
+  interface Window {
+    daybookEmulatorSignIn?: (uid: string) => Promise<void>;
+  }
+}

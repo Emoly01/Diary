@@ -1,10 +1,55 @@
 .desk {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.desk-tray {
+  flex: 1 1 240px;
+  max-width: 360px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 899px) {
+  .desk-tray {
+    max-width: none;
+  }
+}
+
+.desk-tray-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.desk-tray-head h2 {
+  font-size: 23px;
+}
+
+.desk-tray-intro {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.desk-tray-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .desk-page-wrap {
-  width: 100%;
+  flex: 999 1 560px;
+  min-width: 0;
   max-width: 960px;
   padding-left: 18px;
 }

@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:emulator": "vite --mode emulator",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
+    "test": "vitest run src",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-daybook",
     "test:rules": "firebase emulators:exec --only firestore --project demo-daybook \"vitest run tests/rules.test.ts\""
   },
   "dependencies": {
     "@fontsource/fredoka": "^5.3.0",
     "@fontsource/nunito": "^5.3.0",
+    "browser-image-compression": "^2.0.2",
     "firebase": "^12.19.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -27,6 +31,7 @@
     "firebase-tools": "^15.34.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.5"
   },
   "overrides": {

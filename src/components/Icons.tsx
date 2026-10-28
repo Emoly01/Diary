@@ -43,3 +43,54 @@ export function SignOutIcon({ size = 18 }: { size?: number }) {
     </svg>
   );
 }
+
+export function CameraIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2}>
+      <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </svg>
+  );
+}
+
+export function TuckIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2.2}>
+      <path d="M12 3v11M7 9l5 5 5-5M4 15v5h16v-5" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={3}>
+      <path d="M5 12l4 4 10-10" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2.4}>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+
+export function TrashIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2}>
+      <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />
+    </svg>
+  );
+}
+
+/** A small cloud with an arrow: saved here, not yet synced. */
+export function PendingIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size} strokeWidth={2.2}>
+      <path d="M7 18a4 4 0 0 1-.6-7.95A5.5 5.5 0 0 1 17 9a4.5 4.5 0 0 1 .5 9" />
+      <path d="M12 12v7M9.5 16.5L12 19l2.5-2.5" />
+    </svg>
+  );
+}
