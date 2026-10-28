@@ -15,6 +15,7 @@ import { bookDay } from './day';
 import { isMood, type Mood } from './moods';
 import { photosCol, photoDoc, scrapDoc, scrapsCol } from './paths';
 import type { PreparedPhoto } from './photos';
+import { addToOutbox, removeFromOutbox, replayOutbox, type OutboxEntry } from './outbox';
 import type { Settings } from './settings';
 
 export type Scrap = {
@@ -62,27 +63,43 @@ export function createScrap(
   settings: Settings,
   now = new Date(),
 ): { id: string; synced: Promise<void> } {
-  const batch = writeBatch(db);
-  const ref = doc(scrapsCol(uid));
-  let photoId: string | null = null;
-
-  if (input.photo) {
-    const photoRef = doc(photosCol(uid));
-    photoId = photoRef.id;
-    batch.set(photoRef, { ...input.photo, createdAt: serverTimestamp() });
-  }
-
-  batch.set(ref, {
+  const entry: OutboxEntry = {
+    id: doc(scrapsCol(uid)).id,
+    photoId: input.photo ? doc(photosCol(uid)).id : null,
     text: input.text,
     mood: input.mood,
-    photoId,
-    capturedAt: Timestamp.fromDate(now),
+    capturedAt: now.getTime(),
     day: bookDay(now, settings.dayStartsAt, settings.timezone),
+    photo: input.photo,
+  };
+  // Copied synchronously first: see outbox.ts for why.
+  addToOutbox(uid, entry);
+  const synced = writeScrap(uid, entry);
+  synced.then(() => removeFromOutbox(uid, entry.id), () => {});
+  return { id: entry.id, synced };
+}
+
+/** One batch for a new scrap and its photo. Idempotent: the ids are fixed. */
+function writeScrap(uid: string, e: OutboxEntry): Promise<void> {
+  const batch = writeBatch(db);
+  if (e.photo && e.photoId) {
+    batch.set(photoDoc(uid, e.photoId), { ...e.photo, createdAt: serverTimestamp() });
+  }
+  batch.set(scrapDoc(uid, e.id), {
+    text: e.text,
+    mood: e.mood,
+    photoId: e.photo ? e.photoId : null,
+    capturedAt: Timestamp.fromMillis(e.capturedAt),
+    day: e.day,
     pageDay: null,
     createdAt: serverTimestamp(),
   });
+  return batch.commit();
+}
 
-  return { id: ref.id, synced: batch.commit() };
+/** On start: write again any new scrap the app was closed on too quickly. */
+export function resendLostScraps(uid: string): Promise<number> {
+  return replayOutbox(uid, (e) => writeScrap(uid, e));
 }
 
 export function updateScrap(
@@ -90,6 +107,8 @@ export function updateScrap(
   scrap: Scrap,
   input: { text: string; mood: Mood | null; photo: PhotoChange },
 ): Promise<void> {
+  // An edit supersedes the outbox copy; replaying it would undo the edit.
+  removeFromOutbox(uid, scrap.id);
   const batch = writeBatch(db);
   let photoId = scrap.photoId;
 
@@ -108,6 +127,8 @@ export function updateScrap(
 }
 
 export function deleteScrap(uid: string, scrap: Scrap): Promise<void> {
+  // Or a replay would bring the deleted scrap back.
+  removeFromOutbox(uid, scrap.id);
   const batch = writeBatch(db);
   batch.delete(scrapDoc(uid, scrap.id));
   if (scrap.photoId) batch.delete(photoDoc(uid, scrap.photoId));

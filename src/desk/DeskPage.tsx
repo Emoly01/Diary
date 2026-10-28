@@ -85,15 +85,19 @@ export default function DeskPage({
           </div>
         </header>
 
-        <input
-          className="desk-title"
-          value={content.title}
-          onChange={(e) => session.setTitle(e.target.value)}
-          placeholder={readOnly ? 'Untitled' : 'Give the day a title'}
-          aria-label="Page title"
-          readOnly={locked}
-          maxLength={120}
-        />
+        {readOnly ? (
+          <h1 className="desk-title">{content.title || 'Untitled'}</h1>
+        ) : (
+          <input
+            className="desk-title"
+            value={content.title}
+            onChange={(e) => session.setTitle(e.target.value)}
+            placeholder="Give the day a title"
+            aria-label="Page title"
+            readOnly={locked}
+            maxLength={120}
+          />
+        )}
 
         <EditorContent editor={editor} className="desk-editor" />
 

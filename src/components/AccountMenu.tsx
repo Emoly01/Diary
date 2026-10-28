@@ -1,57 +1,114 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useAuth, useOwner } from '../auth/AuthProvider';
+import { exportBook } from '../data/memory';
+import { saveDayStart, useSettings } from '../data/settings';
+import { bookDay } from '../data/day';
 import { SignOutIcon } from './Icons';
+import SlideOver from './SlideOver';
+import './AccountMenu.css';
 
-/** The account button. Grows into the settings sheet in phase 5. */
+type ExportState =
+  | { kind: 'idle' }
+  | { kind: 'working' }
+  | { kind: 'done'; name: string; counts: string; partial: boolean }
+  | { kind: 'error' };
+
+const DownloadIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+  </svg>
+);
+
+const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? '' : 's'}`;
+
+/** The account button, and the settings sheet it opens. */
 export default function AccountMenu() {
   const user = useOwner();
   const { signOut } = useAuth();
+  const settings = useSettings(user.uid);
   const [open, setOpen] = useState(false);
-  const menuId = useId();
-  const rootRef = useRef<HTMLDivElement>(null);
+  const [exp, setExp] = useState<ExportState>({ kind: 'idle' });
 
   const initial = (user.displayName || user.email || '?').trim().charAt(0).toUpperCase();
 
-  useEffect(() => {
-    if (!open) return;
-    function onPointer(e: PointerEvent) {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+  async function runExport() {
+    setExp({ kind: 'working' });
+    try {
+      const file = await exportBook(user.uid);
+      const name = `daybook-${bookDay(new Date(), settings.dayStartsAt, settings.timezone)}.json`;
+      const url = URL.createObjectURL(new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      a.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      setExp({
+        kind: 'done',
+        name,
+        counts: `${plural(file.pages.length, 'page')}, ${plural(file.scraps.length, 'scrap')}, ${plural(file.photos.length, 'photo')}`,
+        partial: !file.fromServer,
+      });
+    } catch (err) {
+      console.error(err);
+      setExp({ kind: 'error' });
     }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    document.addEventListener('pointerdown', onPointer);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onPointer);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
+  }
 
   return (
-    <div className="account" ref={rootRef}>
-      <button
-        type="button"
-        className="account-button"
-        aria-label="Account"
-        aria-expanded={open}
-        aria-controls={menuId}
-        onClick={() => setOpen((o) => !o)}
-      >
+    <>
+      <button type="button" className="account-button" aria-label="Account and settings" aria-expanded={open} onClick={() => setOpen(true)}>
         {initial}
       </button>
       {open && (
-        <div className="account-menu" id={menuId}>
-          <div className="account-who">
-            <strong>{user.displayName}</strong>
-            <span className="label">{user.email}</span>
+        <SlideOver side="right" label="settings-heading" closeLabel="Close settings" onClose={() => setOpen(false)}>
+          <div className="settings">
+            <h2 id="settings-heading">Settings</h2>
+            <div className="settings-who">
+              <strong>{user.displayName}</strong>
+              <span className="label">{user.email}</span>
+            </div>
+
+            <section className="settings-block">
+              <label htmlFor="day-start" className="field-label">
+                Day starts at
+              </label>
+              <input
+                id="day-start"
+                type="time"
+                className="settings-time"
+                value={settings.dayStartsAt}
+                onChange={(e) => {
+                  if (/^\d{2}:\d{2}$/.test(e.target.value)) void saveDayStart(user.uid, e.target.value);
+                }}
+              />
+              <p className="settings-hint">Anything caught before this time counts as the day before.</p>
+            </section>
+
+            <section className="settings-block">
+              <h3 className="field-label">Your book</h3>
+              <button type="button" className="btn btn-primary" onClick={runExport} disabled={exp.kind === 'working'}>
+                <DownloadIcon />
+                {exp.kind === 'working' ? 'Gathering everything…' : 'Export everything'}
+              </button>
+              <p className="settings-hint" role="status">
+                {exp.kind === 'idle' && 'One JSON file with every page, scrap and photo.'}
+                {exp.kind === 'done' && `Downloaded ${exp.name}: ${exp.counts}.`}
+                {exp.kind === 'error' && 'The export didn’t work. Try again in a moment.'}
+              </p>
+              {exp.kind === 'done' && exp.partial && (
+                <p className="settings-warn">
+                  Some of it came from this device’s offline copy. Export again when you’re online to be sure nothing is missing.
+                </p>
+              )}
+            </section>
+
+            <button type="button" className="btn btn-quiet settings-signout" onClick={() => void signOut()}>
+              <SignOutIcon />
+              Sign out
+            </button>
           </div>
-          <button type="button" className="btn btn-quiet" onClick={() => void signOut()}>
-            <SignOutIcon />
-            Sign out
-          </button>
-        </div>
+        </SlideOver>
       )}
-    </div>
+    </>
   );
 }
