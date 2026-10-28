@@ -104,6 +104,12 @@ after you fill in the real one.
 - Removing a photo added at the desk deletes the stored picture too. Removing the polaroid of a
   filed scrap keeps the picture, because the scrap still uses it.
 - Pasted image links must be `https`, and they're loaded with `referrerpolicy="no-referrer"`.
+- **Screen sizes:**
+  - **1600 px and up:** tray, page and sticker sheet, side by side.
+  - **1280–1599 px:** tray and page; the sticker sheet opens from the **Stickers** button. This
+    keeps page text at 16–18 px; three columns would shrink it to ~10 px.
+  - **900–1279 px:** the page alone; tray and sheet slide over.
+  - **Under 900 px:** the page is read-only.
 
 ## Installing on a phone
 

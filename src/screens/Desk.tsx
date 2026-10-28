@@ -15,7 +15,7 @@ import EditorToolbar from '../desk/EditorToolbar';
 import Tray from '../desk/Tray';
 import { usePageSession } from '../desk/usePageSession';
 import { useBookStatus } from '../useBookStatus';
-import { useLayout } from '../useMediaQuery';
+import { useLayout, useSheetInRail } from '../useMediaQuery';
 import { useNow } from '../useNow';
 import '../components/Shell.css';
 import './Desk.css';
@@ -37,6 +37,9 @@ export default function Desk() {
 function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string; isToday: boolean; timezone: string }) {
   const layout = useLayout();
   const readOnly = layout === 'phone';
+  // Below 1600 px the sheet slides over from the right, opened from the header.
+  const sheetInRail = useSheetInRail();
+  const sheetAsPanel = !readOnly && !sheetInRail;
   const status = useBookStatus(uid);
   const unfiled = useTrayScraps(uid);
   const filed = usePageScraps(uid, day);
@@ -55,9 +58,9 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
     const bottom = Math.min(r.bottom, window.innerHeight);
     return { x: PAGE_WIDTH / 2, y: ((top + bottom) / 2 - r.top) / scale };
   };
-  // On a tablet the sheet covers the page, so it closes once something is added.
+  // As a slide-over the sheet covers the page, so it closes once something is added.
   const added = () => {
-    if (layout === 'tablet') setPanel(null);
+    if (sheetAsPanel) setPanel(null);
   };
 
   const sheet = (
@@ -96,18 +99,20 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
     <div className="app">
       <AppHeader
         actions={
-          layout === 'tablet' && (
-            <>
+          <>
+            {layout === 'tablet' && (
               <button type="button" className="btn desk-tray-toggle" aria-expanded={panel === 'tray'} onClick={() => setPanel('tray')}>
                 <TrayIcon />
                 Tray · {unfiled.length}
               </button>
+            )}
+            {sheetAsPanel && (
               <button type="button" className="btn desk-tray-toggle" aria-expanded={panel === 'sheet'} onClick={() => setPanel('sheet')}>
                 <Sparkle size={16} color="var(--accent)" />
                 Stickers
               </button>
-            </>
-          )
+            )}
+          </>
         }
       />
 
@@ -152,7 +157,7 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
           <DeskPage uid={uid} day={day} session={session} timezone={timezone} readOnly={readOnly} pageRef={pageRef} />
         </section>
 
-        {layout === 'desk' && <aside className="desk-rail">{sheet}</aside>}
+        {layout === 'desk' && sheetInRail && <aside className="desk-rail">{sheet}</aside>}
       </main>
 
       {layout === 'tablet' && panel === 'tray' && (
@@ -160,7 +165,7 @@ function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string;
           {tray}
         </SlideOver>
       )}
-      {layout === 'tablet' && panel === 'sheet' && (
+      {sheetAsPanel && panel === 'sheet' && (
         <SlideOver side="right" label="sheet-heading" closeLabel="Close sticker sheet" onClose={() => setPanel(null)}>
           {sheet}
         </SlideOver>
