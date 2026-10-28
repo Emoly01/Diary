@@ -3,12 +3,14 @@
 A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md);
 the design boards it builds from are exported in `design/project/`.
 
-**Status:** Phase 3 (desk writing). Built so far:
+**Status:** Phase 4 (stickers and washi tape). Built so far:
 - **Phase 1:** Google sign-in, the owner lock, Firestore rules and tests, theme and fonts, the app shell.
 - **Phase 2:** quick capture at `/catch` (text, photo, mood) that works offline, the scrap tray on the
   desk, and installing as an app.
 - **Phase 3:** one page per day with the TipTap editor and autosave, filing scraps from the tray onto
   the page (text as paragraphs, photos as polaroids), and the tablet and phone layouts.
+- **Phase 4:** the sticker sheet (eight presets, six washi tapes), photos added at the desk from
+  the device or a pasted link, and drag, rotate, scale, delete and stacking order for every sticker.
 
 ## Run it locally
 
@@ -94,6 +96,20 @@ after you fill in the real one.
   once Firestore has the page.
 - `/` is today's page, using the 04:00 rollover; `/day/YYYY-MM-DD` opens any other day.
 - Filing is one-way: deleting a filed scrap's paragraph doesn't send it back to the tray.
+- **Stickers** are stored on the page as logical-px positions on the 960 px page, so they sit in the
+  same spot at every window size and on every device. Handling them:
+  - **Mouse or touch:** drag to move, pinch to scale and turn on touch, or use the handles.
+  - **Keyboard** (on a focused sticker): arrows move it (Shift for 1 px steps), `[` and `]` turn it,
+    `+` and `-` resize it, and Delete or Backspace removes it.
+- Removing a photo added at the desk deletes the stored picture too. Removing the polaroid of a
+  filed scrap keeps the picture, because the scrap still uses it.
+- Pasted image links must be `https`, and they're loaded with `referrerpolicy="no-referrer"`.
+- **Screen sizes:**
+  - **1600 px and up:** tray, page and sticker sheet, side by side.
+  - **1280–1599 px:** tray and page; the sticker sheet opens from the **Stickers** button. This
+    keeps page text at 16–18 px; three columns would shrink it to ~10 px.
+  - **900–1279 px:** the page alone; tray and sheet slide over.
+  - **Under 900 px:** the page is read-only.
 
 ## Installing on a phone
 

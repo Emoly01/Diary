@@ -1,10 +1,12 @@
+import type { PointerEvent, RefObject } from 'react';
 import { EditorContent } from '@tiptap/react';
 import PageScaler from '../components/PageScaler';
-import Polaroid from '../components/Polaroid';
+import StickerLayer from '../stickers/StickerLayer';
 import MoodChip from '../components/MoodChip';
 import Sparkle from '../components/stickers/Sparkle';
 import { formatClock, formatDayLong } from '../data/day';
-import { stickerBottom, type PageSession } from './usePageSession';
+import { stickerBottom } from '../stickers/geometry';
+import type { PageSession } from './usePageSession';
 
 const RINGS = Array.from({ length: 16 }, (_, i) => i);
 const MIN_HEIGHT = 900;
@@ -33,12 +35,14 @@ export default function DeskPage({
   session,
   timezone,
   readOnly,
+  pageRef,
 }: {
   uid: string;
   day: string;
   session: PageSession;
   timezone: string;
   readOnly: boolean;
+  pageRef?: RefObject<HTMLElement | null>;
 }) {
   const { content, editor } = session;
   // Nothing is editable until the saved page is on screen, or it would be overwritten.
@@ -46,9 +50,20 @@ export default function DeskPage({
   const minHeight = Math.max(MIN_HEIGHT, ...content.stickers.map((s) => stickerBottom(s) + 60));
   const words = session.wordCount;
 
+  // A press anywhere but on a sticker puts its handles away.
+  const onPointerDown = (e: PointerEvent) => {
+    if (!(e.target as HTMLElement).closest('.sticker')) session.select(null);
+  };
+
   return (
     <PageScaler>
-      <article className="page-surface desk-page" style={{ minHeight }} aria-label={`Page for ${formatDayLong(day)}`}>
+      <article
+        ref={pageRef}
+        className="page-surface desk-page"
+        style={{ minHeight }}
+        aria-label={`Page for ${formatDayLong(day)}`}
+        onPointerDown={onPointerDown}
+      >
         <div className="spiral desk-spiral" aria-hidden="true">
           {RINGS.map((i) => (
             <span key={i} />
@@ -82,9 +97,7 @@ export default function DeskPage({
 
         <EditorContent editor={editor} className="desk-editor" />
 
-        <div className="desk-stickers">
-          {content.stickers.map((s) => (s.kind === 'photo' ? <Polaroid key={s.id} uid={uid} sticker={s} /> : null))}
-        </div>
+        <StickerLayer uid={uid} session={session} interactive={!locked} />
 
         <footer className="desk-page-foot">
           <span role="status">{statusText(session, timezone)}</span>

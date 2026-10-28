@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Timestamp } from 'firebase/firestore';
+import { doc, Timestamp } from 'firebase/firestore';
 import { useEditor, type Editor, type JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { clearDraft, pickStart, readDraft, writeDraft } from '../data/drafts';
@@ -11,10 +11,14 @@ import {
   savePage,
   usePage,
   type PageContent,
+  type SaveExtras,
   type Sticker,
+  type StickerKind,
 } from '../data/pages';
+import { photosCol } from '../data/paths';
+import type { PreparedPhoto } from '../data/photos';
 import type { Scrap } from '../data/scraps';
-import { POLAROID_WIDTH } from '../components/Polaroid';
+import { bottomZ, clampPosition, newSticker, topZ } from '../stickers/geometry';
 
 const AUTOSAVE_MS = 1000;
 
@@ -35,13 +39,24 @@ export type PageSession = {
   setTitle: (title: string) => void;
   setMood: (mood: PageContent['mood']) => void;
   file: (scrap: Scrap) => void;
+  /** The sticker with handles showing, if any. Not saved. */
+  selected: string | null;
+  select: (id: string | null) => void;
+  /** Move a sticker on screen during a gesture, without saving. */
+  previewSticker: (s: Sticker) => void;
+  /** Keep a sticker's new place, size or angle. */
+  commitSticker: (s: Sticker) => void;
+  addSticker: (kind: Exclude<StickerKind, 'photo'>, ref: string, center: { x: number; y: number }) => void;
+  addPhoto: (photo: PreparedPhoto, center: { x: number; y: number }) => void;
+  removeSticker: (id: string) => void;
+  bringToFront: (id: string) => void;
+  sendToBack: (id: string) => void;
 };
 
 /** Where a newly filed photo lands: the right-hand column, cascading down. */
 function nextPolaroid(photoId: string, stickers: Sticker[]): Sticker {
   const photos = stickers.filter((s) => s.kind === 'photo').length;
-  const z = stickers.reduce((m, s) => Math.max(m, s.z), 0) + 1;
-  return {
+  return clampPosition({
     id: crypto.randomUUID(),
     kind: 'photo',
     ref: photoId,
@@ -49,12 +64,9 @@ function nextPolaroid(photoId: string, stickers: Sticker[]): Sticker {
     y: 150 + photos * 120,
     rotation: photos % 2 ? 3 : -3,
     scale: 1,
-    z,
-  };
+    z: topZ(stickers),
+  });
 }
-
-/** Height a sticker needs below its top; polaroids are a little taller than wide. */
-export const stickerBottom = (s: Sticker) => s.y + POLAROID_WIDTH * s.scale * 1.15;
 
 /**
  * One open page: the editor, the autosave, and the draft safety net.
@@ -62,8 +74,19 @@ export const stickerBottom = (s: Sticker) => s.y + POLAROID_WIDTH * s.scale * 1.
  * second after typing stops, or immediately when the tab hides or the page
  * closes. On open, a draft newer than the saved page wins.
  */
-export function usePageSession(uid: string, day: string, readOnly: boolean): PageSession {
+export function usePageSession(
+  uid: string,
+  day: string,
+  readOnly: boolean,
+  /** Photos that belong to filed scraps: removing their sticker keeps the photo. */
+  keepPhotoIds: string[] = [],
+): PageSession {
   const pageState = usePage(uid, day);
+  const [selected, setSelected] = useState<string | null>(null);
+  const keepPhotos = useRef(keepPhotoIds);
+  keepPhotos.current = keepPhotoIds;
+  // Photos to delete with the next save, once their last sticker is gone.
+  const dropPhotos = useRef<string[]>([]);
 
   const [content, setContentState] = useState<PageContent>(emptyContent);
   const [wordCount, setWordCount] = useState(0);
@@ -81,14 +104,17 @@ export function usePageSession(uid: string, day: string, readOnly: boolean): Pag
   const timer = useRef<number | undefined>(undefined);
 
   const flush = useCallback(
-    (fileScrapIds: string[] = []) => {
+    (extras: SaveExtras = {}) => {
       window.clearTimeout(timer.current);
-      if (!dirty.current && fileScrapIds.length === 0) return;
+      const hasExtras = !!(extras.file?.length || extras.addPhotos?.length);
+      if (!dirty.current && !hasExtras) return;
       dirty.current = false;
       const at = editedAt.current || Date.now();
       shownEditedAt.current = at;
       createdAt.current ??= Timestamp.now();
-      savePage(uid, day, contentRef.current, { editedAt: at, createdAt: createdAt.current }, fileScrapIds).catch(
+      const deletePhotos = dropPhotos.current;
+      dropPhotos.current = [];
+      savePage(uid, day, contentRef.current, { editedAt: at, createdAt: createdAt.current }, { ...extras, deletePhotos }).catch(
         (err) => {
           console.error(err);
           setStatus({ kind: 'error' });
@@ -227,11 +253,87 @@ export function usePageSession(uid: string, day: string, readOnly: boolean): Pag
         scrapIds: [...scrapIds, scrap.id],
       });
       // Filing saves straight away, with the scrap marked filed in the same batch.
-      flush([scrap.id]);
+      flush({ file: [scrap.id] });
     },
     [editor, readOnly, update, flush],
   );
 
+  const stickers = () => contentRef.current.stickers;
+  const replace = (s: Sticker) => stickers().map((x) => (x.id === s.id ? s : x));
+
+  const previewSticker = useCallback((s: Sticker) => {
+    contentRef.current = { ...contentRef.current, stickers: replace(clampPosition(s)) };
+    setContentState(contentRef.current);
+  }, []);
+
+  const commitSticker = useCallback((s: Sticker) => update({ stickers: replace(clampPosition(s)) }), [update]);
+
+  const addSticker = useCallback(
+    (kind: Exclude<StickerKind, 'photo'>, ref: string, center: { x: number; y: number }) => {
+      if (readOnly) return;
+      const s = newSticker(kind, ref, center, stickers());
+      update({ stickers: [...stickers(), s] });
+      setSelected(s.id);
+    },
+    [readOnly, update],
+  );
+
+  const addPhoto = useCallback(
+    (photo: PreparedPhoto, center: { x: number; y: number }) => {
+      if (readOnly) return;
+      const id = doc(photosCol(uid)).id;
+      const s = newSticker('photo', id, center, stickers());
+      update({ stickers: [...stickers(), s] });
+      setSelected(s.id);
+      // The photo and the sticker that shows it land in one batch.
+      flush({ addPhotos: [{ id, photo }] });
+    },
+    [readOnly, uid, update, flush],
+  );
+
+  const removeSticker = useCallback(
+    (id: string) => {
+      const gone = stickers().find((s) => s.id === id);
+      if (!gone) return;
+      const rest = stickers().filter((s) => s.id !== id);
+      const photoStillUsed = rest.some((s) => s.kind === 'photo' && s.ref === gone.ref);
+      if (gone.kind === 'photo' && !photoStillUsed && !keepPhotos.current.includes(gone.ref)) {
+        dropPhotos.current.push(gone.ref);
+      }
+      update({ stickers: rest });
+      setSelected(null);
+    },
+    [update],
+  );
+
+  const restack = useCallback(
+    (id: string, z: (all: Sticker[]) => number) => {
+      const s = stickers().find((x) => x.id === id);
+      if (s) update({ stickers: replace({ ...s, z: z(stickers().filter((x) => x.id !== id)) }) });
+    },
+    [update],
+  );
+  const bringToFront = useCallback((id: string) => restack(id, topZ), [restack]);
+  const sendToBack = useCallback((id: string) => restack(id, bottomZ), [restack]);
+
   const pending = pageState.status === 'ready' && pageState.pending;
-  return { editor, content, wordCount, status, pending, setTitle, setMood, file };
+  return {
+    editor,
+    content,
+    wordCount,
+    status,
+    pending,
+    setTitle,
+    setMood,
+    file,
+    selected,
+    select: setSelected,
+    previewSticker,
+    commitSticker,
+    addSticker,
+    addPhoto,
+    removeSticker,
+    bringToFront,
+    sendToBack,
+  };
 }

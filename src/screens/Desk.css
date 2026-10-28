@@ -1,4 +1,4 @@
-/* Layout: tray | page. The right rail (On this day, stickers) arrives later. */
+/* Layout: tray | page | sticker sheet. */
 .desk {
   display: flex;
   align-items: flex-start;
@@ -13,6 +13,16 @@
   max-height: calc(100vh - 32px);
   overflow-y: auto;
   padding: 4px 6px 16px 2px;
+}
+
+.desk-rail {
+  flex: 0 0 280px;
+  min-width: 0;
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 4px 2px 16px;
 }
 
 .desk-page-col {
@@ -120,6 +130,11 @@
   padding: 20px 20px 32px;
   background: var(--desk);
   box-shadow: var(--shadow-page);
+}
+
+.slide-over-right {
+  left: auto;
+  right: 0;
 }
 
 .slide-over-close {
@@ -345,11 +360,246 @@ button.mood-chip {
 .desk-stickers {
   position: absolute;
   inset: 0;
+  z-index: 2;
   pointer-events: none;
 }
 
-.polaroid {
+/* Stickers */
+.sticker {
   position: absolute;
+  transform-origin: center;
+  pointer-events: auto;
+}
+
+.desk-stickers .sticker:not(:has(.sticker-hit)) {
+  pointer-events: none;
+}
+
+.sticker-hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sticker-hit:active {
+  cursor: grabbing;
+}
+
+.sticker-hit:focus-visible {
+  outline: none;
+}
+
+.sticker.is-selected {
+  outline: 3px dashed var(--accent);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+.sticker-svg {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 4px 4px rgba(94, 72, 140, 0.25));
+}
+
+.washi {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.sticker-handle {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 3px solid #fff;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 3px 8px rgba(94, 72, 140, 0.3);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.sticker-rotate {
+  cursor: grab;
+}
+
+.sticker-resize {
+  cursor: nwse-resize;
+}
+
+.sticker-delete {
+  background: var(--ink);
+}
+
+/* Toolbar row: formatting, then the selected sticker's options */
+.desk-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.sticker-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sticker-tools .btn {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Sticker sheet */
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--page);
+  box-shadow: 0 10px 24px rgba(94, 72, 140, 0.16);
+}
+
+.sheet h2 {
+  font-size: 21px;
+}
+
+.sheet-tabs {
+  display: flex;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sheet-tab {
+  min-height: var(--tap);
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--lilac-3);
+  cursor: pointer;
+}
+
+.sheet-tab[aria-pressed='true'] {
+  background: var(--ink);
+  color: #fff;
+}
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sheet-grid-washi {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sheet-item {
+  height: 66px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 0;
+  border-radius: 14px;
+  background: #f6f2ff;
+  cursor: pointer;
+}
+
+.sheet-item:hover {
+  background: var(--lilac-3);
+}
+
+.sheet-art {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  height: 100%;
+}
+
+.sheet-washi {
+  height: 26px;
+  transform: rotate(-3deg);
+}
+
+.sheet-photo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 2px dashed var(--lilac-2);
+}
+
+.sheet-photo h3 {
+  margin-top: 10px;
+}
+
+.sheet-photo-btn {
+  min-height: 48px;
+  font-size: 16px;
+}
+
+.sheet-link {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sheet-link-row {
+  display: flex;
+  gap: 6px;
+}
+
+.sheet-link-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 2px solid var(--lilac-2);
+  border-radius: var(--radius-pill);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+}
+
+.sheet-link-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sheet-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.sheet-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-card-sm);
+  background: var(--pink-3);
+  font-size: 14px;
+}
+
+.polaroid {
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 10px 10px 34px;
   border-radius: 14px;

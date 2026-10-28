@@ -154,7 +154,8 @@ There are four screens and one settings sheet. Catch is built for speed, the des
 
 | Width | Layout |
 | --- | --- |
-| 1280 px and up | Three columns, as drawn |
+| 1600 px and up | Three columns, as drawn |
+| 1280–1599 px | Tray on the left and the page; the sticker sheet opens from a header button (changed in Phase 4: a third column squeezed the 960 px page to ~10 px text at 1280 px) |
 | 900–1279 px (tablet) | Tray and right rail become slide-over panels opened from the header; the page stays central |
 | Under 900 px (phone) | Opens Catch; desk pages are read-only there, with a link back to Catch |
 
