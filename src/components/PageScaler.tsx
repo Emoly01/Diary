@@ -1,5 +1,10 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { PAGE_WIDTH } from '../data/pages';
+
+const PageScale = createContext(1);
+
+/** Screen px per logical px for the page being rendered. */
+export const usePageScale = () => useContext(PageScale);
 
 // Room for the spiral rings, which stick out past the page's left edge.
 const GUTTER = 22;
@@ -37,7 +42,7 @@ export default function PageScaler({ children }: { children: ReactNode }) {
         className="page-scaler-inner"
         style={{ width: PAGE_WIDTH, transform: `scale(${scale})`, left: GUTTER }}
       >
-        {children}
+        <PageScale.Provider value={scale}>{children}</PageScale.Provider>
       </div>
     </div>
   );

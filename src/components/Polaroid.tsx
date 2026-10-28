@@ -1,25 +1,32 @@
-import type { CSSProperties } from 'react';
-import type { Sticker } from '../data/pages';
+import { useState } from 'react';
 import { usePhoto } from '../data/photos';
 
-export const POLAROID_WIDTH = 230;
+/**
+ * A photo in a white polaroid frame, filling its sticker box. `photoId` is a
+ * stored photo; `url` is a pasted image link, loaded from its host without
+ * telling it where it's shown.
+ */
+export default function Polaroid({ uid, photoId, url }: { uid: string; photoId?: string; url?: string }) {
+  const { ref, src, missing } = usePhoto<HTMLElement>(uid, photoId ?? null);
+  const [broken, setBroken] = useState(false);
+  const shown = url && !broken ? url : src;
 
-/** A photo sticker in a white polaroid frame. */
-export default function Polaroid({ uid, sticker }: { uid: string; sticker: Sticker }) {
-  const { ref, src, missing } = usePhoto<HTMLElement>(uid, sticker.ref);
-  const style: CSSProperties = {
-    left: sticker.x,
-    top: sticker.y,
-    width: POLAROID_WIDTH * sticker.scale,
-    zIndex: sticker.z,
-    transform: `rotate(${sticker.rotation}deg)`,
-  };
   return (
-    <figure ref={ref} className="polaroid" style={style}>
-      {src ? (
-        <img src={src} alt="A photo from the day" />
+    <figure ref={ref} className="polaroid">
+      {shown ? (
+        <img
+          src={shown}
+          alt={url ? 'A linked photo' : 'A photo from the day'}
+          referrerPolicy="no-referrer"
+          draggable={false}
+          onError={() => url && setBroken(true)}
+        />
       ) : (
-        <span className="polaroid-empty" role="img" aria-label={missing ? 'Photo unavailable' : 'Loading photo'} />
+        <span
+          className="polaroid-empty"
+          role="img"
+          aria-label={broken ? 'Linked photo unavailable' : missing ? 'Photo unavailable' : 'Loading photo'}
+        />
       )}
     </figure>
   );

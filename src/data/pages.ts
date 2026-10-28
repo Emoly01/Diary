@@ -3,7 +3,8 @@ import { onSnapshot, serverTimestamp, Timestamp, writeBatch, type DocumentData }
 import type { JSONContent } from '@tiptap/react';
 import { db } from '../firebase';
 import { isMood, type Mood } from './moods';
-import { pageDoc, scrapDoc } from './paths';
+import { pageDoc, photoDoc, scrapDoc } from './paths';
+import type { PreparedPhoto } from './photos';
 
 export type StickerKind = 'preset' | 'washi' | 'custom' | 'photo' | 'link';
 
@@ -119,17 +120,27 @@ export function usePage(uid: string, day: string): PageState {
   return state;
 }
 
+/** Writes that ride along with a page save, in the same batch. */
+export type SaveExtras = {
+  /** Scraps to mark as filed onto this page. */
+  file?: string[];
+  /** Photos added at the desk. */
+  addPhotos?: { id: string; photo: PreparedPhoto }[];
+  /** Photos whose last sticker was removed. */
+  deletePhotos?: string[];
+};
+
 /**
  * Writes the whole page (never a merge: a merge would deep-merge the editor
- * JSON). `fileScrapIds` are marked as filed onto this page in the same batch.
- * Queued offline at once; the promise settles when the server answers.
+ * JSON), plus any `extras`, in one batch. Queued offline at once; the
+ * promise settles when the server answers.
  */
 export function savePage(
   uid: string,
   day: string,
   content: PageContent,
   meta: { editedAt: number; createdAt: Timestamp },
-  fileScrapIds: string[] = [],
+  extras: SaveExtras = {},
 ): Promise<void> {
   const plainText = plainTextOf(content.body);
   const batch = writeBatch(db);
@@ -146,6 +157,10 @@ export function savePage(
     createdAt: meta.createdAt,
     updatedAt: serverTimestamp(),
   });
-  for (const id of fileScrapIds) batch.update(scrapDoc(uid, id), { pageDay: day });
+  for (const id of extras.file ?? []) batch.update(scrapDoc(uid, id), { pageDay: day });
+  for (const { id, photo } of extras.addPhotos ?? []) {
+    batch.set(photoDoc(uid, id), { ...photo, createdAt: serverTimestamp() });
+  }
+  for (const id of extras.deletePhotos ?? []) batch.delete(photoDoc(uid, id));
   return batch.commit();
 }
