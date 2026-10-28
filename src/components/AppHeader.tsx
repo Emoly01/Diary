@@ -16,6 +16,9 @@ export default function AppHeader() {
         <NavLink to="/pages?search=1" className="nav-pill nav-search">
           Search
         </NavLink>
+        <NavLink to="/catch" className="nav-pill nav-catch">
+          Catch
+        </NavLink>
       </nav>
       <AccountMenu />
     </header>

@@ -92,6 +92,17 @@
   box-shadow: none;
 }
 
+/* On a phone, Catch is the way back to capturing. */
+.nav-catch {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .nav-catch {
+    display: inline-flex;
+  }
+}
+
 /* Account */
 .account {
   position: relative;

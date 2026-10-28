@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
+import { getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { settingsDoc } from './data/paths';
+import { DEFAULT_DAY_STARTS_AT, deviceTimezone } from './data/day';
 
 export type BookStatus = 'checking' | 'open' | 'offline' | 'denied';
 
@@ -14,15 +15,15 @@ export function useBookStatus(uid: string): BookStatus {
 
   useEffect(() => {
     let cancelled = false;
-    const ref = doc(db, 'users', uid, 'settings', 'main');
+    const ref = settingsDoc(uid);
 
     (async () => {
       try {
         const snap = await getDoc(ref);
         if (!snap.exists()) {
           await setDoc(ref, {
-            dayStartsAt: '04:00',
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            dayStartsAt: DEFAULT_DAY_STARTS_AT,
+            timezone: deviceTimezone(),
             createdAt: serverTimestamp(),
           });
         }

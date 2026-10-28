@@ -1,0 +1,35 @@
+.mood-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mood-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.mood-option {
+  flex: 1 1 0;
+  max-width: 64px;
+  min-height: var(--tap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  border-radius: var(--radius-card);
+  border: 3px solid transparent;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mood-option[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: #fff;
+  font-weight: 700;
+}

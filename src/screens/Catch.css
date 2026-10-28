@@ -1,7 +1,7 @@
 .catch {
   max-width: 430px;
   margin: 0 auto;
-  padding: 20px 20px 24px;
+  padding: 20px 20px 96px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -20,13 +20,169 @@
   font-size: 15px;
 }
 
+.catch-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .catch-title {
   font-size: 36px;
   line-height: 1.05;
+}
+
+.catch-when {
+  font-size: 14px;
 }
 
 .catch-card {
   border-radius: 22px;
   padding: 18px;
   background-size: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.catch-washi {
+  position: absolute;
+  top: -10px;
+  right: 30px;
+  width: 80px;
+  height: 22px;
+  background-color: rgba(255, 158, 192, 0.8);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.95) 2.5px, transparent 3px);
+  background-size: 12px 12px;
+  border-radius: 3px;
+  transform: rotate(5deg);
+}
+
+.catch-text {
+  width: 100%;
+  min-height: 108px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  resize: none;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 21px;
+  line-height: 1.45;
+}
+
+.catch-text:focus {
+  outline: none;
+}
+
+.catch-card:focus-within {
+  box-shadow: 0 0 0 3px var(--accent), var(--shadow-page);
+}
+
+.catch-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+}
+
+.catch-photo-label {
+  flex: 1 1 auto;
+}
+
+.catch-icon-btn {
+  width: var(--tap);
+  padding: 0;
+}
+
+.catch-shrinking {
+  animation: catch-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes catch-pulse {
+  to {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catch-shrinking {
+    animation: none;
+  }
+}
+
+.catch-save {
+  width: 100%;
+}
+
+.catch-hint,
+.catch-empty {
+  margin: 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.catch-empty {
+  text-align: left;
+}
+
+.catch-edit-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.catch-delete-confirm {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.catch-delete-confirm:hover {
+  color: var(--on-accent);
+}
+
+.catch-error {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-card-sm);
+  background: var(--pink-3);
+  font-size: 15px;
+}
+
+.catch-earlier {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.catch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.catch-toast-region {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.catch-toast {
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: var(--shadow-page);
 }
