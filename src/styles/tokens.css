@@ -1,0 +1,47 @@
+:root {
+  /* Surfaces */
+  --desk: #eee8fb;
+  --desk-dot: rgba(255, 255, 255, 0.95);
+  --page: #ffffff;
+  --page-grid: rgba(194, 56, 107, 0.09);
+
+  /* Text */
+  --ink: #2e2a3b;
+  --ink-soft: #5f5873; /* 5.6:1 on desk, 6.7:1 on page */
+
+  /* Accent */
+  --accent: #c2386b;
+  --accent-edge: #9e2456;
+  --on-accent: #ffffff; /* 5.2:1 on accent */
+
+  /* Sticker palette */
+  --pink: #ff9ec0;
+  --pink-2: #ffd3e2;
+  --pink-3: #ffdce8;
+  --pink-cover: #ffb8cf;
+  --lilac: #c9b8f5;
+  --lilac-2: #d5ceea;
+  --lilac-3: #f3effc;
+  --mint: #9ed9c5;
+  --mint-2: #d4f3e6;
+  --butter: #ffe38a;
+  --butter-2: #fff1b8;
+  --peach: #ffc9a8;
+
+  /* Type */
+  --font-display: 'Fredoka', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  /* Shape */
+  --radius-page: 24px;
+  --radius-card: 18px;
+  --radius-card-sm: 12px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-card: 0 6px 14px rgba(94, 72, 140, 0.16);
+  --shadow-page: 0 24px 48px rgba(94, 72, 140, 0.2);
+  --shadow-sticker: drop-shadow(0 4px 4px rgba(94, 72, 140, 0.25));
+
+  --tap: 44px;
+}
