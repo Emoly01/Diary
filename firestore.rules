@@ -1,12 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // The lock. Replace OWNER_UID with the owner's Firebase Auth UID.
-    // Until then nobody can read or write anything.
+    // The lock: only the owner's Firebase Auth UID can read or write.
     function isOwner(uid) {
       return request.auth != null
         && request.auth.uid == uid
-        && uid == 'OWNER_UID';
+        && uid == 'glsvsh2xl7R7DkH2mLFqID7GDv73';
     }
     match /users/{uid}/{document=**} {
       allow read, write: if isOwner(uid);
