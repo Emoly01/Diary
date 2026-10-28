@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from './Logo';
 import AccountMenu from './AccountMenu';
 
-export default function AppHeader() {
+/** `actions` sit before the account button, e.g. the tablet's tray toggle. */
+export default function AppHeader({ actions }: { actions?: ReactNode }) {
   return (
     <header className="app-header">
       <Logo />
@@ -20,7 +22,10 @@ export default function AppHeader() {
           Catch
         </NavLink>
       </nav>
-      <AccountMenu />
+      <div className="app-header-end">
+        {actions}
+        <AccountMenu />
+      </div>
     </header>
   );
 }

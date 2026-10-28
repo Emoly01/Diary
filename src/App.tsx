@@ -12,6 +12,7 @@ export default function App() {
         <RequireOwner>
           <Routes>
             <Route path="/" element={<Desk />} />
+            <Route path="/day/:day" element={<Desk />} />
             <Route path="/catch" element={<Catch />} />
             <Route path="/pages" element={<Pages />} />
             <Route path="*" element={<Navigate to="/" replace />} />

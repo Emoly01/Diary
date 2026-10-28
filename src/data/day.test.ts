@@ -67,3 +67,13 @@ describe('formatting', () => {
     expect(formatStamp(at, BERLIN)).toBe('Mon · 16:45');
   });
 });
+
+describe('formatDayLong', () => {
+  it('reads like the page header', async () => {
+    const { formatDayLong, isBookDay } = await import('./day');
+    expect(formatDayLong('2026-10-26')).toBe('Monday · 26 October 2026');
+    expect(isBookDay('2026-10-26')).toBe(true);
+    expect(isBookDay('2026-13-40')).toBe(false);
+    expect(isBookDay('yesterday')).toBe(false);
+  });
+});

@@ -3,10 +3,12 @@
 A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md);
 the design boards it builds from are exported in `design/project/`.
 
-**Status:** Phase 2 (Catch). Built so far:
+**Status:** Phase 3 (desk writing). Built so far:
 - **Phase 1:** Google sign-in, the owner lock, Firestore rules and tests, theme and fonts, the app shell.
 - **Phase 2:** quick capture at `/catch` (text, photo, mood) that works offline, the scrap tray on the
   desk, and installing as an app.
+- **Phase 3:** one page per day with the TipTap editor and autosave, filing scraps from the tray onto
+  the page (text as paragraphs, photos as polaroids), and the tablet and phone layouts.
 
 ## Run it locally
 
@@ -62,8 +64,8 @@ after you fill in the real one.
 10. **Deploy the rules**, either:
     - paste `firestore.rules` into **Firestore → Rules → Publish**, or
     - `npx firebase login` then `npx firebase deploy --only firestore:rules --project <project-id>`.
-11. Reload the site. The page footer should say **Book unlocked**. If it says the lock
-    refused the account, the UID in the deployed rules doesn't match.
+11. Reload the site. The desk opens on today's page. If a yellow banner says the lock refused
+    this account, the UID in the deployed rules doesn't match.
 
 ### Prove it
 
@@ -86,6 +88,12 @@ after you fill in the real one.
 - The photo compressor's web worker script is served from the app (see `src/data/photos.ts`).
   Without that, `browser-image-compression` loads it from `cdn.jsdelivr.net`.
 - Scrap lists are sorted on the device, so Firestore needs no composite indexes.
+- **Autosave and drafts.** The page saves to Firestore a second after typing stops, and at once
+  when the tab hides or closes. Every keystroke is also copied to a draft in `localStorage`, so a
+  reload never loses text: on open, a draft newer than the saved page wins. A draft is deleted
+  once Firestore has the page.
+- `/` is today's page, using the 04:00 rollover; `/day/YYYY-MM-DD` opens any other day.
+- Filing is one-way: deleting a filed scrap's paragraph doesn't send it back to the tray.
 
 ## Installing on a phone
 

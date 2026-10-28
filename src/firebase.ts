@@ -37,6 +37,8 @@ googleProvider.setCustomParameters({ prompt: 'select_account' });
 // Offline-first: writes queue in IndexedDB and sync on reconnect, across tabs.
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  // Editor JSON can carry undefined attrs; Firestore would reject them.
+  ignoreUndefinedProperties: true,
 });
 
 // Local development against the Firebase emulators (`npm run emulators`,

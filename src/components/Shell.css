@@ -92,6 +92,14 @@
   box-shadow: none;
 }
 
+/* Phone: logo and account on top, the nav on its own row below. */
+@media (max-width: 899px) {
+  .app-header > .app-nav {
+    order: 3;
+    width: 100%;
+  }
+}
+
 /* On a phone, Catch is the way back to capturing. */
 .nav-catch {
   display: none;

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { Scrap } from '../data/scraps';
 import { formatStamp } from '../data/day';
 import { moodInfo } from '../data/moods';
@@ -21,6 +21,7 @@ export default function ScrapCard({
   filedLabel,
   onOpen,
   current,
+  action,
 }: {
   uid: string;
   scrap: Scrap;
@@ -32,6 +33,8 @@ export default function ScrapCard({
   onOpen?: (scrap: Scrap) => void;
   /** Marks the card being edited. */
   current?: boolean;
+  /** A button at the card's right edge, e.g. the tray's "+". */
+  action?: ReactNode;
 }) {
   const style = { background: tone, '--tilt': `${TILTS[index % TILTS.length]}deg` } as CSSProperties;
   const filed = scrap.pageDay !== null;
@@ -64,6 +67,7 @@ export default function ScrapCard({
           <span className="visually-hidden">Mood: {moodInfo(scrap.mood).label}</span>
         </span>
       )}
+      {action && <span className="scrap-action">{action}</span>}
     </>
   );
 

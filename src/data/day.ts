@@ -89,3 +89,15 @@ export function formatMoment(date: Date, timezone: string): string {
 export function formatStamp(date: Date, timezone: string): string {
   return `${format(date, timezone, { weekday: 'short' })} · ${formatClock(date, timezone)}`;
 }
+
+/** "Wednesday · 28 October 2026" for a YYYY-MM-DD book day. */
+export function formatDayLong(day: string): string {
+  const [y, m, d] = day.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  const weekday = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'long' }).format(date);
+  const rest = new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+  return `${weekday} · ${rest}`;
+}
+
+export const isBookDay = (s: string | undefined): s is string =>
+  !!s && /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`));
