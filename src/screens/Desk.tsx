@@ -1,78 +1,121 @@
+import { useEffect, useRef, useState } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import Heart from '../components/stickers/Heart';
-import Star from '../components/stickers/Star';
+import { CloseIcon, TrayIcon } from '../components/Icons';
 import { useOwner } from '../auth/AuthProvider';
-import ScrapCard from '../components/ScrapCard';
-import { useTrayScraps } from '../data/scraps';
+import { bookDay, isBookDay } from '../data/day';
+import { usePageScraps, useTrayScraps } from '../data/scraps';
 import { useSettings } from '../data/settings';
-import { useBookStatus, type BookStatus } from '../useBookStatus';
+import DeskPage from '../desk/DeskPage';
+import EditorToolbar from '../desk/EditorToolbar';
+import Tray from '../desk/Tray';
+import { usePageSession } from '../desk/usePageSession';
+import { useBookStatus } from '../useBookStatus';
+import { useLayout } from '../useMediaQuery';
+import { useNow } from '../useNow';
 import '../components/Shell.css';
 import './Desk.css';
 
-const RINGS = Array.from({ length: 12 }, (_, i) => i);
-
-const STATUS_COPY: Record<BookStatus, string> = {
-  checking: 'Opening the book…',
-  open: 'Book unlocked',
-  offline: 'Offline. Changes will sync when you’re back.',
-  denied: 'The lock refused this account. Check the UID in firestore.rules.',
-};
-
+/** `/` is today's page; `/day/:day` opens any other day. */
 export default function Desk() {
-  const user = useOwner();
-  const status = useBookStatus(user.uid);
-  const settings = useSettings(user.uid);
-  const tray = useTrayScraps(user.uid);
-  const firstName = (user.displayName ?? '').split(' ')[0];
+  const { uid } = useOwner();
+  const params = useParams();
+  const settings = useSettings(uid);
+  const today = bookDay(useNow(), settings.dayStartsAt, settings.timezone);
+
+  if (params.day !== undefined && !isBookDay(params.day)) return <Navigate to="/" replace />;
+  const day = params.day ?? today;
+
+  // A fresh session per day: at 04:00, "/" rolls over to the new page.
+  return <DeskForDay key={day} uid={uid} day={day} isToday={day === today} timezone={settings.timezone} />;
+}
+
+function DeskForDay({ uid, day, isToday, timezone }: { uid: string; day: string; isToday: boolean; timezone: string }) {
+  const layout = useLayout();
+  const readOnly = layout === 'phone';
+  const status = useBookStatus(uid);
+  const session = usePageSession(uid, day, readOnly);
+  const unfiled = useTrayScraps(uid);
+  const filed = usePageScraps(uid, day);
+  const [trayOpen, setTrayOpen] = useState(false);
+
+  const tray = (
+    <Tray
+      uid={uid}
+      timezone={timezone}
+      unfiled={unfiled}
+      filed={filed}
+      filedLabel={isToday ? 'on today’s page' : 'on this page'}
+      onFile={readOnly ? undefined : session.file}
+    />
+  );
 
   return (
     <div className="app">
-      <AppHeader />
+      <AppHeader
+        actions={
+          layout === 'tablet' && (
+            <button
+              type="button"
+              className="btn desk-tray-toggle"
+              aria-expanded={trayOpen}
+              onClick={() => setTrayOpen(true)}
+            >
+              <TrayIcon />
+              Tray · {unfiled.length}
+            </button>
+          )
+        }
+      />
+
+      {status === 'denied' && (
+        <p className="desk-banner" role="alert">
+          The lock refused this account. Check the UID in firestore.rules.
+        </p>
+      )}
+      {readOnly && (
+        <p className="desk-banner">
+          Reading only. Pages are written at the desk; on the phone, <Link to="/catch">catch a scrap</Link>.
+        </p>
+      )}
+
       <main className="desk">
-        <aside className="desk-tray" aria-labelledby="tray-heading">
-          <div className="desk-tray-head">
-            <h2 id="tray-heading">Scrap tray</h2>
-            <span className="label">{tray.length} waiting</span>
-          </div>
-          <p className="desk-tray-intro">Caught on your phone. Filing them onto the page comes next.</p>
-          {tray.length === 0 ? (
-            <p className="desk-tray-intro">Empty for now.</p>
-          ) : (
-            <ul className="desk-tray-list">
-              {tray.map((s, i) => (
-                <li key={s.id}>
-                  <ScrapCard uid={user.uid} scrap={s} timezone={settings.timezone} index={i} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </aside>
+        {layout === 'desk' && (
+          <aside className="desk-tray" aria-labelledby="tray-heading">
+            {tray}
+          </aside>
+        )}
 
-        <section aria-label="Today's page" className="desk-page-wrap">
-          <div className="page-surface desk-page">
-            <div className="spiral" aria-hidden="true">
-              {RINGS.map((i) => (
-                <span key={i} />
-              ))}
-            </div>
-            <div className="desk-washi" aria-hidden="true" />
-            <Star size={64} tilt={10} className="desk-star" />
-            <Heart size={54} tilt={-8} className="desk-heart" />
-
-            <span className="pill desk-today">Today</span>
-            <h1 className="desk-title">{firstName ? `Hello, ${firstName}.` : 'Hello.'}</h1>
-            <p className="placeholder-note">
-              This is your book, and it’s locked to you. Writing the day’s page and stickers
-              arrive in the next phases.
-            </p>
-
-            <p className={`desk-status desk-status-${status}`} role="status">
-              <span className="desk-status-dot" aria-hidden="true" />
-              {STATUS_COPY[status]}
-            </p>
-          </div>
+        <section className="desk-page-col" aria-label={isToday ? 'Today’s page' : 'Page'}>
+          {!readOnly && session.editor && <EditorToolbar editor={session.editor} />}
+          <DeskPage uid={uid} day={day} session={session} timezone={timezone} readOnly={readOnly} />
         </section>
       </main>
+
+      {layout === 'tablet' && trayOpen && <TrayPanel onClose={() => setTrayOpen(false)}>{tray}</TrayPanel>}
+    </div>
+  );
+}
+
+/** Tablet: the tray slides over from the left. */
+function TrayPanel({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeRef.current?.focus();
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', esc);
+    return () => document.removeEventListener('keydown', esc);
+  }, [onClose]);
+
+  return (
+    <div className="slide-over" role="dialog" aria-modal="true" aria-labelledby="tray-heading">
+      <div className="slide-over-scrim" onClick={onClose} />
+      <div className="slide-over-panel">
+        <button ref={closeRef} type="button" className="btn btn-quiet slide-over-close" aria-label="Close tray" onClick={onClose}>
+          <CloseIcon />
+        </button>
+        {children}
+      </div>
     </div>
   );
 }

@@ -147,3 +147,8 @@ export function useDayScraps(uid: string, day: string): Scrap[] {
 export function useTrayScraps(uid: string): Scrap[] {
   return useScrapQuery(`tray:${uid}`, () => query(scrapsCol(uid), where('pageDay', '==', null)));
 }
+
+/** Scraps filed onto the page for `day`. */
+export function usePageScraps(uid: string, day: string): Scrap[] {
+  return useScrapQuery(`page:${uid}:${day}`, () => query(scrapsCol(uid), where('pageDay', '==', day)));
+}
