@@ -94,7 +94,7 @@ export default function Pages() {
       <AppHeader />
       <main className="pages">
         <div className="pages-head">
-          <h1>The pages</h1>
+          <h1>Pages</h1>
           <div className="pages-search">
             <label htmlFor="pages-search" className="pages-search-label">
               Search the book
