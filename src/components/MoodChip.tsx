@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { moodInfo, type Mood } from '../data/moods';
-import MoodFace from './MoodFace';
+import MoodMoon from './MoodMoon';
 import MoodPicker from './MoodPicker';
 
 /** The tilted mood sticker on the page header. Opens the five faces. */
@@ -31,7 +31,7 @@ export default function MoodChip({
   }, [open]);
 
   const label = mood ? `mood: ${moodInfo(mood).label}` : 'add a mood';
-  const face = mood ? <MoodFace mood={mood} size={30} /> : null;
+  const face = mood ? <MoodMoon mood={mood} size={30} /> : null;
 
   if (readOnly) {
     return mood ? <span className="mood-chip">{face}{label}</span> : null;

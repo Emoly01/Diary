@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import MoodFace from '../components/MoodFace';
+import MoodMoon from '../components/MoodMoon';
 import { useOwner } from '../auth/AuthProvider';
 import { formatDayLong } from '../data/day';
 import { makeSearch, snippet, useAllPages, type PageSummary } from '../data/memory';
 import { PresetArt } from '../stickers/presets';
-import { washiStyle } from '../stickers/washi';
+import { WashiStrip } from '../stickers/washi';
 import '../components/Shell.css';
 import './Pages.css';
 
@@ -31,7 +31,9 @@ function MiniStickers({ page }: { page: PageSummary }) {
             <PresetArt name={s.ref} />
           </span>
         ) : (
-          <span key={s.id} className="washi pages-washi" style={{ ...washiStyle(s.ref), transform: `rotate(${s.rotation}deg)` }} />
+          <span key={s.id} className="pages-washi" style={{ transform: `rotate(${s.rotation}deg)` }}>
+            <WashiStrip name={s.ref} />
+          </span>
         ),
       )}
     </span>
@@ -43,7 +45,7 @@ function PageCard({ page }: { page: PageSummary }) {
     <Link to={`/day/${page.day}`} className="pages-card">
       <span className="pages-card-top">
         <span className="label">{shortDay(page.day)}</span>
-        {page.mood && <MoodFace mood={page.mood} size={24} />}
+        {page.mood && <MoodMoon mood={page.mood} size={24} />}
       </span>
       <span className="pages-card-title">{page.title || 'Untitled'}</span>
       <span className="pages-card-foot">

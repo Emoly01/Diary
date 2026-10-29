@@ -1,5 +1,6 @@
 import { PAGE_WIDTH, type Sticker, type StickerKind } from '../data/pages';
-import { PRESETS } from './presets';
+import { presetFor } from './presets';
+import { WASHI_HEIGHT, WASHI_LENGTH } from './washi';
 
 export const MIN_SCALE = 0.3;
 export const MAX_SCALE = 4;
@@ -8,11 +9,11 @@ export const MAX_SCALE = 4;
 export function baseSize(s: { kind: StickerKind; ref: string }): { w: number; h: number } {
   switch (s.kind) {
     case 'preset': {
-      const p = PRESETS[s.ref];
-      return p ? { w: p.w, h: p.h } : { w: 110, h: 110 };
+      const p = presetFor(s.ref);
+      return { w: p.w, h: p.h };
     }
     case 'washi':
-      return { w: 170, h: 38 };
+      return { w: WASHI_LENGTH, h: WASHI_HEIGHT };
     default:
       // Polaroid: 10 px frame, a 5:4 photo, a deeper bottom edge.
       return { w: 230, h: 212 };

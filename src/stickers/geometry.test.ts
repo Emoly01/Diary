@@ -6,7 +6,10 @@ const s = (o: Partial<Sticker>): Sticker => ({ id: 'a', kind: 'preset', ref: 'st
 
 describe('sticker geometry', () => {
   it('knows each kind’s box', () => {
-    expect(baseSize({ kind: 'preset', ref: 'rainbow' })).toEqual({ w: 140, h: 94 });
+    expect(baseSize({ kind: 'preset', ref: 'word-good-day' })).toEqual({ w: 190, h: 50 });
+    expect(baseSize({ kind: 'preset', ref: 'moon-3' })).toEqual({ w: 72, h: 72 });
+    // Old names take their new art's size.
+    expect(baseSize({ kind: 'preset', ref: 'rainbow' })).toEqual({ w: 110, h: 110 });
     expect(baseSize({ kind: 'washi', ref: 'pink-dots' })).toEqual({ w: 170, h: 38 });
     expect(baseSize({ kind: 'photo', ref: 'p1' })).toEqual({ w: 230, h: 212 });
     expect(baseSize({ kind: 'preset', ref: 'unknown' })).toEqual({ w: 110, h: 110 });

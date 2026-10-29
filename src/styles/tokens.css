@@ -1,47 +1,89 @@
+/* Phase 6, ember grimoire: the token table in REDESIGN.md. Contrast ratios in brackets. */
 :root {
-  /* Surfaces */
-  --desk: #eee8fb;
-  --desk-dot: rgba(255, 255, 255, 0.95);
-  --page: #ffffff;
-  --page-grid: rgba(194, 56, 107, 0.09);
+  /* Desk */
+  --desk: #15100e;
+  --desk-glow: radial-gradient(ellipse 75% 55% at 50% 108%, rgba(232, 116, 42, 0.24), transparent 70%);
+  --desk-gild: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(201, 164, 92, 0.08), transparent 70%);
+  --on-desk: #f3e6d3; /* 15.4:1 on desk */
+  --on-desk-soft: #bca893; /* 8.2:1 */
 
-  /* Text */
-  --ink: #2e2a3b;
-  --ink-soft: #5f5873; /* 5.6:1 on desk, 6.7:1 on page */
+  /* Gold */
+  --gold: #d9b46a; /* 9.6:1 on desk */
+  --gold-edge: #c9a45c;
 
-  /* Accent */
-  --accent: #c2386b;
-  --accent-edge: #9e2456;
-  --on-accent: #ffffff; /* 5.2:1 on accent */
+  /* Ember */
+  --ember: #e8742a;
+  --ember-light: #f4b183;
 
-  /* Sticker palette */
-  --pink: #ff9ec0;
-  --pink-2: #ffd3e2;
-  --pink-3: #ffdce8;
-  --pink-cover: #ffb8cf;
-  --lilac: #c9b8f5;
-  --lilac-2: #d5ceea;
-  --lilac-3: #f3effc;
-  --mint: #9ed9c5;
-  --mint-2: #d4f3e6;
-  --butter: #ffe38a;
-  --butter-2: #fff1b8;
-  --peach: #ffc9a8;
+  /* Cover */
+  --cover: #1e3127;
+
+  /* Paper */
+  --parchment: #f4ecdd;
+  --slip: #fbf6ec;
+  --die-cut: #fffbf3;
+
+  /* Ink on paper */
+  --ink: #2b1f19; /* 13.6:1 on parchment */
+  --ink-soft: #6a5747; /* 5.8:1 */
+  --ink-body-soft: #4a3a30; /* 9.2:1 */
+  --ember-ink: #a3401a; /* 5.4:1 */
+  --moss-ink: #4c6141; /* 6.3:1 on slip */
+
+  /* Oxblood */
+  --oxblood: #8e2a14;
+  --oxblood-light: #b4402a;
+  --pocket: #4a1a16;
+
+  /* Inkwell tray */
+  --tray: #1a1411;
+  --tray-edge: inset 0 0 0 1px rgba(217, 180, 106, 0.45);
+
+  /* Index tabs: the current one is parchment. Text 6.3–10:1. */
+  --tab-1: #d9824f;
+  --tab-2: #9db38d;
+  --tab-3: #b3c2cf;
+  --on-tab: #1a1411;
 
   /* Type */
-  --font-display: 'Fredoka', system-ui, sans-serif;
-  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Newsreader', Georgia, serif;
+  --font-label: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* Shape */
-  --radius-page: 24px;
-  --radius-card: 18px;
-  --radius-card-sm: 12px;
+  /* Shadows */
+  --shadow-page: 1px 1px 0 #e2d5be, 2px 2px 0 #f4ecdd, 3px 3px 0 #e2d5be, 4px 4px 0 #f4ecdd, 5px 5px 0 #c9a45c;
+  --shadow-book: 0 40px 80px rgba(0, 0, 0, 0.6), 0 8px 18px rgba(0, 0, 0, 0.45);
+  --shadow-sticker: drop-shadow(0 3px 3px rgba(43, 31, 25, 0.25));
+  --shadow-washi: drop-shadow(0 2px 2px rgba(43, 31, 25, 0.15));
+
   --radius-pill: 999px;
-
-  /* Shadow */
-  --shadow-card: 0 6px 14px rgba(94, 72, 140, 0.16);
-  --shadow-page: 0 24px 48px rgba(94, 72, 140, 0.2);
-  --shadow-sticker: drop-shadow(0 4px 4px rgba(94, 72, 140, 0.25));
-
   --tap: 44px;
+
+  /*
+   * v1 names, pointed at the new palette so the screens not rebuilt yet stay
+   * legible between build steps. Removed once Catch, Pages, Settings and the
+   * gate are rebuilt (step 3).
+   */
+  --page: var(--parchment);
+  --page-grid: transparent;
+  --desk-dot: transparent;
+  --accent: var(--ember-ink);
+  --accent-edge: var(--oxblood);
+  --on-accent: var(--slip);
+  --pink: var(--ember-light);
+  --pink-2: var(--slip);
+  --pink-3: var(--slip);
+  --pink-cover: var(--cover);
+  --lilac: var(--tab-3);
+  --lilac-2: #e2d5be;
+  --lilac-3: var(--slip);
+  --mint: var(--tab-2);
+  --mint-2: var(--slip);
+  --butter: var(--gold);
+  --butter-2: var(--slip);
+  --peach: var(--ember-light);
+  --radius-page: 4px;
+  --radius-card: 6px;
+  --radius-card-sm: 4px;
+  --shadow-card: 0 6px 14px rgba(0, 0, 0, 0.25);
 }

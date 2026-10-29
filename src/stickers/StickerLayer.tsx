@@ -4,17 +4,17 @@ import type { Sticker } from '../data/pages';
 import Polaroid from '../components/Polaroid';
 import { usePageScale } from '../components/PageScaler';
 import { CloseIcon } from '../components/Icons';
-import { PresetArt, PRESETS } from './presets';
-import { WASHI, washiStyle } from './washi';
+import { PresetArt, presetFor } from './presets';
+import { resolveWashi, WASHI, WashiStrip } from './washi';
 import { baseSize, clampScale, normaliseAngle } from './geometry';
 import type { PageSession } from '../desk/usePageSession';
 
 export function stickerLabel(s: Sticker): string {
   switch (s.kind) {
     case 'preset':
-      return `${PRESETS[s.ref]?.label ?? 'Sticker'} sticker`;
+      return `${presetFor(s.ref).label} sticker`;
     case 'washi':
-      return WASHI[s.ref]?.label ?? 'Washi tape';
+      return WASHI[resolveWashi(s.ref)].label;
     case 'link':
       return 'Linked photo';
     default:
@@ -27,7 +27,7 @@ function Art({ uid, s }: { uid: string; s: Sticker }) {
     case 'preset':
       return <PresetArt name={s.ref} />;
     case 'washi':
-      return <span className="washi" style={washiStyle(s.ref)} />;
+      return <WashiStrip name={s.ref} />;
     case 'link':
       return <Polaroid uid={uid} url={s.ref} />;
     default:

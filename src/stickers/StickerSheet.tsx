@@ -2,7 +2,7 @@ import { useRef, useState, type FormEvent } from 'react';
 import { CameraIcon } from '../components/Icons';
 import { PhotoError, preparePhoto, type PreparedPhoto } from '../data/photos';
 import { PRESET_NAMES, PRESETS, PresetArt } from './presets';
-import { WASHI, WASHI_NAMES, washiStyle } from './washi';
+import { WASHI, WASHI_NAMES, WashiStrip } from './washi';
 
 type Tab = 'stickers' | 'washi';
 
@@ -105,7 +105,9 @@ export default function StickerSheet({
         <div className="sheet-grid sheet-grid-washi">
           {WASHI_NAMES.map((n) => (
             <button key={n} type="button" className="sheet-item" aria-label={`Add ${WASHI[n].label.toLowerCase()}`} onClick={() => onWashi(n)}>
-              <span className="washi sheet-washi" style={washiStyle(n)} />
+              <span className="sheet-washi">
+                <WashiStrip name={n} />
+              </span>
             </button>
           ))}
         </div>

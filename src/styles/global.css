@@ -13,9 +13,9 @@ body,
 
 body {
   background-color: var(--desk);
-  background-image: radial-gradient(var(--desk-dot) 1.6px, transparent 2.2px);
-  background-size: 30px 30px;
-  color: var(--ink);
+  background-image: var(--desk-glow), var(--desk-gild);
+  background-attachment: fixed;
+  color: var(--on-desk);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
@@ -32,11 +32,11 @@ h3 {
 }
 
 a {
-  color: var(--ink);
+  color: inherit;
 }
 
 a:hover {
-  color: var(--accent-edge);
+  color: var(--ember-ink);
 }
 
 button {
@@ -45,7 +45,7 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--ember);
   outline-offset: 3px;
 }
 
@@ -58,7 +58,33 @@ button {
   white-space: nowrap;
 }
 
-/* Buttons */
+/* Stickers: shared by the page, the tray, the cabinet and the archive */
+.sticker-svg {
+  display: block;
+  overflow: visible;
+  filter: var(--shadow-sticker);
+}
+
+/* Word labels carry their own edge and shadow, as on the board. */
+.sticker-svg.sticker-word {
+  filter: none;
+}
+
+.sticker-word-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.washi-strip {
+  display: block;
+  overflow: visible;
+  filter: var(--shadow-washi);
+}
+
+/* Buttons: mono caps, as on the boards */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -66,31 +92,33 @@ button {
   gap: 10px;
   min-height: var(--tap);
   padding: 0 18px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  font-family: var(--font-display);
+  background: transparent;
+  font-family: var(--font-label);
+  font-size: 12px;
   font-weight: 500;
-  font-size: 16px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
 }
 
+/* The ember primary: "Tuck into the pocket". Ink on ember. */
 .btn-primary {
   min-height: 56px;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: 18px;
-  font-weight: 600;
-  box-shadow: 0 4px 0 var(--accent-edge);
+  background: var(--ember);
+  color: var(--on-tab);
+  font-size: 13px;
 }
 
 .btn-primary:hover {
-  color: var(--on-accent);
+  color: var(--on-tab);
+  background: var(--ember-light);
 }
 
 .btn-primary:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 var(--accent-edge);
+  transform: translateY(1px);
 }
 
 .btn:disabled {
@@ -98,25 +126,48 @@ button {
   cursor: not-allowed;
 }
 
+/* A hairline button that takes its colour from where it sits. */
 .btn-quiet {
-  background: var(--lilac-3);
+  border-color: currentColor;
 }
 
 .btn-quiet:hover {
-  background: var(--lilac-2);
-  color: var(--ink);
+  color: var(--ember-ink);
+}
+
+/* Gold hairline, on the desk. */
+.btn-gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-gold:hover {
+  color: var(--on-desk);
+}
+
+/* Ember hairline: "Photo" on the tray, "Copy out the whole book". */
+.btn-ember {
+  border-color: var(--ember);
+  color: var(--ember-light);
+}
+
+.btn-ember:hover {
+  color: var(--on-desk);
 }
 
 .label {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
 .field-label {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 18px;
+  font-style: italic;
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -202,4 +253,43 @@ button {
 .scrap-action {
   flex: none;
   align-self: center;
+}
+
+/*
+ * v1 bridge (temporary): the screens not rebuilt yet keep their light
+ * surfaces, so their text goes back to ink there. Removed in step 3.
+ */
+.page-surface,
+.otd,
+.sheet,
+.scrap-card,
+.polaroid,
+.mood-chip,
+.mood-chip-pop,
+.desk-banner,
+.desk-tray-toggle,
+.desk-scrap-count,
+.editor-tool,
+.sticker-tools .btn,
+.nav-pill[aria-current='page'],
+.pages-card,
+.pages-search,
+.catch-tray,
+.catch-card,
+.gate-uid,
+.settings-block,
+.mood-option {
+  color: var(--ink);
+}
+
+.gate .label,
+.gate-copy p,
+.tray-head .label,
+.tray-intro,
+.catch .label {
+  color: var(--on-desk-soft);
+}
+
+.cover-label {
+  color: var(--ink);
 }

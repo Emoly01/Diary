@@ -3,7 +3,7 @@ import type { Scrap } from '../data/scraps';
 import { formatStamp } from '../data/day';
 import { moodInfo } from '../data/moods';
 import Photo from './Photo';
-import MoodFace from './MoodFace';
+import MoodMoon from './MoodMoon';
 import { CheckIcon, PendingIcon } from './Icons';
 
 const TILTS = [-0.9, 0.8, -0.5, 0.9, -0.7, 0.6];
@@ -63,7 +63,7 @@ export default function ScrapCard({
       </span>
       {scrap.mood && (
         <span className="scrap-mood">
-          <MoodFace mood={scrap.mood} size={26} />
+          <MoodMoon mood={scrap.mood} size={26} />
           <span className="visually-hidden">Mood: {moodInfo(scrap.mood).label}</span>
         </span>
       )}

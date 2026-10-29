@@ -16,8 +16,8 @@ export default defineConfig({
         start_url: '/catch',
         scope: '/',
         display: 'standalone',
-        background_color: '#EEE8FB',
-        theme_color: '#EEE8FB',
+        background_color: '#15100E',
+        theme_color: '#15100E',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

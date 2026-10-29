@@ -3,18 +3,18 @@ export type Mood = 1 | 2 | 3 | 4 | 5;
 export type MoodInfo = {
   value: Mood;
   label: string;
-  face: string;
-  mouth: string;
-  /** The widest grin is a filled mouth. */
-  filled?: boolean;
+  /** The moon phase that draws it. */
+  phase: string;
+  /** The moon sticker preset for it. */
+  preset: `moon-${Mood}`;
 };
 
 export const MOODS: readonly MoodInfo[] = [
-  { value: 1, label: 'rough', face: '#C9B8F5', mouth: 'M13 29Q20 22 27 29' },
-  { value: 2, label: 'meh', face: '#D5CEEA', mouth: 'M13 27L27 27' },
-  { value: 3, label: 'okay', face: '#9ED9C5', mouth: 'M13 26Q20 29.5 27 26' },
-  { value: 4, label: 'good', face: '#FFE38A', mouth: 'M12 24Q20 32 28 24' },
-  { value: 5, label: 'great', face: '#FFC9A8', mouth: 'M11 23Q20 36 29 23Z', filled: true },
+  { value: 1, label: 'rough', phase: 'new moon', preset: 'moon-1' },
+  { value: 2, label: 'meh', phase: 'crescent moon', preset: 'moon-2' },
+  { value: 3, label: 'okay', phase: 'half moon', preset: 'moon-3' },
+  { value: 4, label: 'good', phase: 'waxing gibbous moon', preset: 'moon-4' },
+  { value: 5, label: 'great', phase: 'full moon', preset: 'moon-5' },
 ];
 
 export function isMood(v: unknown): v is Mood {

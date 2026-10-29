@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import MoodFace from '../components/MoodFace';
+import MoodMoon from '../components/MoodMoon';
 import { formatDayLong } from '../data/day';
 import { sameDayInEarlierYears, useOnThisDay } from '../data/memory';
 
@@ -62,7 +62,7 @@ export default function OnThisDay({
                 </span>
                 <span className="otd-title">
                   {page.title || 'Untitled'}
-                  {page.mood && <MoodFace mood={page.mood} size={22} />}
+                  {page.mood && <MoodMoon mood={page.mood} size={22} />}
                 </span>
                 {page.plainText && (
                   <span className="otd-text">{page.plainText.length > 140 ? `${page.plainText.slice(0, 140).trim()}…` : page.plainText}</span>
