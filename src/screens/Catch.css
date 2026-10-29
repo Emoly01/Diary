@@ -1,10 +1,11 @@
+/* Catch: the ash desk with one parchment slip as the form. */
 .catch {
   max-width: 430px;
   margin: 0 auto;
   padding: 20px 20px 96px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .catch-header {
@@ -14,12 +15,6 @@
   gap: 12px;
 }
 
-.catch-tray {
-  background: #fff;
-  box-shadow: 0 2px 0 rgba(94, 72, 140, 0.1);
-  font-size: 15px;
-}
-
 .catch-heading {
   display: flex;
   flex-direction: column;
@@ -27,62 +22,76 @@
 }
 
 .catch-title {
-  font-size: 36px;
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 600;
   line-height: 1.05;
+  color: var(--on-desk);
 }
 
 .catch-when {
-  font-size: 14px;
+  color: var(--on-desk-soft);
 }
 
+/* The slip: parchment, tilted, with a strip of washi across the top. */
 .catch-card {
-  border-radius: 22px;
-  padding: 18px;
-  background-size: 20px 20px;
+  position: relative;
+  margin-top: 10px;
+  padding: 26px 20px 16px;
+  background: var(--parchment);
+  color: var(--ink);
+  border-radius: 2px;
+  transform: rotate(-0.6deg);
+  box-shadow: var(--shadow-page), 0 16px 32px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+.catch-card:focus-within {
+  outline: 2px solid var(--ember);
+  outline-offset: 4px;
+}
+
 .catch-washi {
   position: absolute;
-  top: -10px;
-  right: 30px;
-  width: 80px;
-  height: 22px;
-  background-color: rgba(255, 158, 192, 0.8);
-  background-image: radial-gradient(rgba(255, 255, 255, 0.95) 2.5px, transparent 3px);
-  background-size: 12px 12px;
-  border-radius: 3px;
-  transform: rotate(5deg);
+  top: -14px;
+  left: calc(50% - 60px);
+  width: 120px;
+  height: 27px;
+  transform: rotate(2deg);
+}
+
+.catch-label {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ink-body-soft);
 }
 
 .catch-text {
   width: 100%;
-  min-height: 108px;
+  min-height: 112px;
   padding: 0;
   border: 0;
   background: transparent;
   resize: none;
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 21px;
-  line-height: 1.45;
+  font-size: 18px;
+  line-height: 1.6;
+  caret-color: var(--ember-ink);
 }
 
 .catch-text:focus {
   outline: none;
 }
 
-.catch-card:focus-within {
-  box-shadow: 0 0 0 3px var(--accent), var(--shadow-page);
-}
-
 .catch-photo-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: var(--tap);
 }
 
 .catch-photo-label {
@@ -110,6 +119,29 @@
   }
 }
 
+/* The moons on the desk */
+.catch .field-label {
+  color: var(--on-desk-soft);
+}
+
+.catch .mood-option {
+  color: var(--on-desk);
+}
+
+.catch .mood-option:hover {
+  background: rgba(217, 180, 106, 0.1);
+}
+
+.catch .mood-option[aria-pressed='true'] {
+  border-color: var(--ember);
+  color: var(--ember-light);
+}
+
+.catch-photo-btn {
+  display: flex;
+}
+
+/* "Tuck into the pocket": full-width ember, ink text, 56 px. */
 .catch-save {
   width: 100%;
 }
@@ -119,7 +151,8 @@
   margin: 0;
   text-align: center;
   font-size: 15px;
-  color: var(--ink-soft);
+  font-style: italic;
+  color: var(--on-desk-soft);
 }
 
 .catch-empty {
@@ -133,36 +166,51 @@
 }
 
 .catch-delete-confirm {
-  background: var(--accent);
-  color: var(--on-accent);
+  border-color: var(--oxblood-light);
+  background: var(--oxblood);
+  color: var(--slip);
 }
 
 .catch-delete-confirm:hover {
-  color: var(--on-accent);
+  color: var(--slip);
 }
 
 .catch-error {
   margin: 0;
   padding: 10px 14px;
-  border-radius: var(--radius-card-sm);
-  background: var(--pink-3);
+  border-radius: 4px;
+  background: var(--slip);
+  color: var(--oxblood);
   font-size: 15px;
 }
 
 .catch-earlier {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 6px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
+.catch-earlier-heading {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--on-desk);
+}
+
+/* Torn slips, as on the pocket page */
 .catch-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.catch-list > li {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
 }
 
 .catch-toast-region {
@@ -177,12 +225,13 @@
 }
 
 .catch-toast {
-  padding: 12px 20px;
-  border-radius: var(--radius-pill);
-  background: var(--ink);
-  color: #fff;
+  padding: 12px 22px;
+  border-radius: 2px;
+  background: var(--slip);
+  color: var(--ink);
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 500;
-  box-shadow: var(--shadow-page);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
 }

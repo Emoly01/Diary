@@ -4,10 +4,12 @@ import RequireOwner from './auth/RequireOwner';
 import Desk from './screens/Desk';
 import Catch from './screens/Catch';
 import Pages from './screens/Pages';
+import SvgDefs from './stickers/SvgDefs';
 
 export default function App() {
   return (
     <AuthProvider>
+      <SvgDefs />
       <BrowserRouter>
         <RequireOwner>
           <Routes>

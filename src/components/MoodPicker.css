@@ -10,6 +10,7 @@
   gap: 4px;
 }
 
+/* The five moons as 44 px buttons, the word under each. */
 .mood-option {
   flex: 1 1 0;
   max-width: 64px;
@@ -19,17 +20,22 @@
   align-items: center;
   gap: 4px;
   padding: 6px 0;
-  border-radius: var(--radius-card);
-  border: 3px solid transparent;
-  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--ink);
   cursor: pointer;
   font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.mood-option:hover {
+  background: rgba(43, 31, 25, 0.05);
 }
 
 .mood-option[aria-pressed='true'] {
-  border-color: var(--accent);
-  background: #fff;
-  font-weight: 700;
+  border-color: var(--ember-ink);
+  color: var(--ember-ink);
 }

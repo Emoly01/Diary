@@ -110,8 +110,8 @@ users/{uid}
 - **`pageDay`** is `null` while a scrap waits in the tray, and the page's day once it's filed. The tray query is `pageDay == null`, newest first. Add the composite index Firestore asks for.
 - **`body`** is TipTap JSON. `plainText` and `wordCount` are kept in sync on save, for search and the footer.
 - **`photos`** hold one compressed JPEG each as a base64 string in `data`, under \~700 KB encoded so the document stays below Firestore's 1 MiB cap. They sit in their own collection so the tray, archive and search never download image bytes. Fetch a photo only when it's on screen.
-- **`stickers[]`** items are `{ id, kind: "preset" | "washi" | "custom" | "photo" | "link", ref, x, y, rotation, scale, z }`. `ref` is the preset name, a `photoId`, or the image URL for `link`. A filed scrap's photo becomes a `photo` sticker in a polaroid frame.
-- **Fixed page width:** render the page at one logical width (960 px) and scale it to fit the screen. Text then wraps the same on every device, and sticker `x`/`y` in logical px stay exactly where they were put.
+- **`stickers[]`** items are `{ id, kind: "preset" | "washi" | "custom" | "photo" | "link", ref, x, y, rotation, scale, z, length? }`. `length` is a stretched washi tape's unscaled length in logical px; it is absent on every other sticker and on unstretched tape (REDESIGN.md). Pages carry `layout: 2` once their positions are on the 640 px page. `ref` is the preset name, a `photoId`, or the image URL for `link`. A filed scrap's photo becomes a `photo` sticker in a polaroid frame.
+- **Fixed page width:** render the page at one logical width (960 px; 640 px since Phase 6, see REDESIGN.md) and scale it to fit the screen. Text then wraps the same on every device, and sticker `x`/`y` in logical px stay exactly where they were put.
 
 ## Screens & behaviour
 

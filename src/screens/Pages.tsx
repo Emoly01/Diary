@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import MoodFace from '../components/MoodFace';
+import MoodMoon from '../components/MoodMoon';
+import { SearchIcon } from '../components/Icons';
 import { useOwner } from '../auth/AuthProvider';
 import { formatDayLong } from '../data/day';
+import { countWord } from '../data/roman';
 import { makeSearch, snippet, useAllPages, type PageSummary } from '../data/memory';
 import { PresetArt } from '../stickers/presets';
-import { washiStyle } from '../stickers/washi';
+import { WashiStrip } from '../stickers/washi';
 import '../components/Shell.css';
 import './Pages.css';
 
@@ -31,7 +33,9 @@ function MiniStickers({ page }: { page: PageSummary }) {
             <PresetArt name={s.ref} />
           </span>
         ) : (
-          <span key={s.id} className="washi pages-washi" style={{ ...washiStyle(s.ref), transform: `rotate(${s.rotation}deg)` }} />
+          <span key={s.id} className="pages-washi" style={{ transform: `rotate(${s.rotation}deg)` }}>
+            <WashiStrip name={s.ref} />
+          </span>
         ),
       )}
     </span>
@@ -43,7 +47,7 @@ function PageCard({ page }: { page: PageSummary }) {
     <Link to={`/day/${page.day}`} className="pages-card">
       <span className="pages-card-top">
         <span className="label">{shortDay(page.day)}</span>
-        {page.mood && <MoodFace mood={page.mood} size={24} />}
+        {page.mood && <MoodMoon mood={page.mood} size={22} />}
       </span>
       <span className="pages-card-title">{page.title || 'Untitled'}</span>
       <span className="pages-card-foot">
@@ -69,11 +73,19 @@ export default function Pages() {
   const search = useMemo(() => makeSearch(pages), [pages]);
   const results = useMemo(() => search(query), [search, query]);
 
+  // The book's tabs open one month (`?month=2026-10`) or one year (`?year=2026`).
+  const month = /^\d{4}-\d{2}$/.test(params.get('month') ?? '') ? params.get('month')! : null;
+  const year = /^\d{4}$/.test(params.get('year') ?? '') ? params.get('year')! : null;
+  const scope = month ?? year;
+
   const months = useMemo(() => {
     const groups = new Map<string, PageSummary[]>();
-    for (const p of pages) groups.set(monthKey(p.day), [...(groups.get(monthKey(p.day)) ?? []), p]);
+    for (const p of pages) {
+      if (scope && !p.day.startsWith(scope)) continue;
+      groups.set(monthKey(p.day), [...(groups.get(monthKey(p.day)) ?? []), p]);
+    }
     return [...groups.entries()];
-  }, [pages]);
+  }, [pages, scope]);
 
   const searching = query.trim().length >= 2;
 
@@ -84,27 +96,31 @@ export default function Pages() {
         <div className="pages-head">
           <h1>Pages</h1>
           <div className="pages-search">
-            <label htmlFor="pages-search" className="visually-hidden">
-              Search your pages
+            <label htmlFor="pages-search" className="pages-search-label">
+              Search the book
             </label>
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="6.5" />
-              <path d="M16 16l4 4" />
-            </svg>
-            <input
-              id="pages-search"
-              ref={searchRef}
-              type="search"
-              placeholder="Search your pages"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setParams(e.target.value ? { q: e.target.value } : {}, { replace: true });
-              }}
-            />
+            <span className="pages-search-field">
+              <SearchIcon />
+              <input
+                id="pages-search"
+                ref={searchRef}
+                type="search"
+                placeholder="A word, a name, a place…"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setParams(e.target.value ? { q: e.target.value } : {}, { replace: true });
+                }}
+              />
+            </span>
           </div>
         </div>
 
+        {scope && !searching && (
+          <p className="pages-note">
+            {month ? monthLabel(month) : `The year ${year}`} · <Link to="/pages">All pages</Link>
+          </p>
+        )}
         {!loading && fromCache && (
           <p className="pages-note" role="status">
             {navigator.onLine ? 'Fetching the rest of your pages…' : 'Offline: showing the pages saved on this device.'}
@@ -116,10 +132,16 @@ export default function Pages() {
           <p className="pages-note">
             No pages yet. <Link to="/">Today’s is waiting on the desk.</Link>
           </p>
+        ) : !searching && months.length === 0 ? (
+          <p className="pages-note">Nothing written {month ? 'this month' : 'this year'} yet.</p>
         ) : searching ? (
           <section aria-labelledby="results-heading">
             <h2 id="results-heading" className="pages-month">
-              {results.length === 0 ? 'Nothing found' : results.length === 1 ? '1 page' : `${results.length} pages`}
+              {results.length === 0
+                ? 'Nothing in here by that name. Yet.'
+                : results.length === 1
+                  ? 'One page'
+                  : `${countWord(results.length).replace(/^./, (c) => c.toUpperCase())} pages`}
             </h2>
             <ul className="pages-results">
               {results.map(({ item, matches }) => {

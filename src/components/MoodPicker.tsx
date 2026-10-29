@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { MOODS, type Mood } from '../data/moods';
-import MoodFace from './MoodFace';
+import MoodMoon from './MoodMoon';
 import './MoodPicker.css';
 
 /** Five faces. Tap one to pick it, tap it again to clear. */
@@ -28,7 +28,7 @@ export default function MoodPicker({
               aria-pressed={on}
               onClick={() => onChange(on ? null : m.value)}
             >
-              <MoodFace mood={m.value} />
+              <MoodMoon mood={m.value} />
               <span>{m.label}</span>
             </button>
           );

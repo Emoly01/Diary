@@ -22,7 +22,7 @@ export default function SignIn() {
         <p>Private by design. Only your account can open this book.</p>
       </div>
       <div className="gate-actions">
-        <button type="button" className="btn btn-primary" onClick={handleClick} disabled={busy}>
+        <button type="button" className="btn gate-google" onClick={handleClick} disabled={busy}>
           <LockIcon />
           Continue with Google
         </button>

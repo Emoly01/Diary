@@ -5,7 +5,8 @@ import Logo from '../components/Logo';
 import MoodPicker from '../components/MoodPicker';
 import Photo from '../components/Photo';
 import ScrapCard from '../components/ScrapCard';
-import { CameraIcon, CloseIcon, TrashIcon, TrayIcon, TuckIcon } from '../components/Icons';
+import { WashiStrip } from '../stickers/washi';
+import { CloseIcon, PhotoIcon, TrashIcon, TuckIcon } from '../components/Icons';
 import { bookDay, formatClock, formatMoment } from '../data/day';
 import type { Mood } from '../data/moods';
 import { PhotoError, photoSrc, preparePhoto, type PreparedPhoto } from '../data/photos';
@@ -29,8 +30,6 @@ type PhotoState =
   | { kind: 'existing'; id: string }
   | { kind: 'preparing' }
   | { kind: 'ready'; photo: PreparedPhoto };
-
-const TONES = ['var(--mint-2)', 'var(--butter-2)', 'var(--pink-3)', 'var(--lilac-3)'];
 
 const WRITE_FAILED = 'That one didn’t save. Check you’re still signed in, then try again.';
 
@@ -105,7 +104,7 @@ export default function Catch() {
     } else {
       const photoToSave = photo.kind === 'ready' ? photo.photo : null;
       createScrap(uid, { text: trimmed, mood, photo: photoToSave }, settings).synced.catch(failed);
-      setToast('Tucked into the tray');
+      setToast('Tucked in.');
     }
     reset();
   }
@@ -166,9 +165,8 @@ export default function Catch() {
     <div className="catch">
       <header className="catch-header">
         <Logo size="sm" />
-        <Link to="/" className="btn catch-tray" aria-label={`Tray, ${tray.length} waiting`}>
-          <TrayIcon />
-          Tray · {tray.length}
+        <Link to="/" className="btn btn-gold" aria-label={`The pocket, ${tray.length} waiting`}>
+          The pocket · {tray.length}
         </Link>
       </header>
 
@@ -177,10 +175,12 @@ export default function Catch() {
         <span className="label catch-when">{formatMoment(now, settings.timezone)}</span>
       </div>
 
-      <form className="page-surface catch-card" onSubmit={save}>
-        <div className="catch-washi" aria-hidden="true" />
-        <label htmlFor="catch-text" className="field-label">
-          {editing ? `Caught at ${formatClock(editing.capturedAt, settings.timezone)}` : 'What just happened?'}
+      <form className="catch-card" onSubmit={save}>
+        <span className="catch-washi" aria-hidden="true">
+          <WashiStrip name="ember-stripe" length={120} />
+        </span>
+        <label htmlFor="catch-text" className="catch-label">
+          {editing ? `Caught at ${formatClock(editing.capturedAt, settings.timezone)}` : 'What happened?'}
         </label>
         <textarea
           id="catch-text"
@@ -216,31 +216,34 @@ export default function Catch() {
               <CloseIcon />
             </button>
           )}
-          <button
-            type="button"
-            className="btn btn-quiet"
-            onClick={() => fileRef.current?.click()}
-            disabled={photo.kind === 'preparing'}
-          >
-            <CameraIcon />
-            {hasPhoto ? 'Change' : 'Add photo'}
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="visually-hidden"
-            tabIndex={-1}
-            aria-hidden="true"
-            onChange={(e) => {
-              void onPickPhoto(e.target.files?.[0]);
-              e.target.value = '';
-            }}
-          />
         </div>
       </form>
 
       <MoodPicker value={mood} onChange={setMood} />
+
+      <div className="catch-photo-btn">
+        <button
+          type="button"
+          className="btn btn-gold"
+          onClick={() => fileRef.current?.click()}
+          disabled={photo.kind === 'preparing'}
+        >
+          <PhotoIcon />
+          {hasPhoto ? 'Change photo' : 'Add photo'}
+        </button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="visually-hidden"
+          tabIndex={-1}
+          aria-hidden="true"
+          onChange={(e) => {
+            void onPickPhoto(e.target.files?.[0]);
+            e.target.value = '';
+          }}
+        />
+      </div>
 
       {error && (
         <p className="catch-error" role="alert">
@@ -250,17 +253,17 @@ export default function Catch() {
 
       <button type="button" className="btn btn-primary catch-save" onClick={() => save()} disabled={!canSave}>
         <TuckIcon />
-        {editing ? 'Save changes' : 'Tuck into tray'}
+        {editing ? 'Save changes' : 'Tuck into the pocket'}
       </button>
 
       {editing ? (
         <div className="catch-edit-actions">
-          <button type="button" className="btn btn-quiet" onClick={reset}>
+          <button type="button" className="btn btn-gold" onClick={reset}>
             Cancel
           </button>
           <button
             type="button"
-            className={`btn ${confirmDelete ? 'catch-delete-confirm' : 'btn-quiet'}`}
+            className={`btn ${confirmDelete ? 'catch-delete-confirm' : 'btn-gold'}`}
             onClick={onDelete}
           >
             <TrashIcon />
@@ -272,7 +275,7 @@ export default function Catch() {
       )}
 
       <section className="catch-earlier" aria-labelledby="earlier-heading">
-        <h2 id="earlier-heading" className="field-label">
+        <h2 id="earlier-heading" className="catch-earlier-heading">
           Earlier today
         </h2>
         {todayScraps.length === 0 ? (
@@ -286,8 +289,7 @@ export default function Catch() {
                   scrap={s}
                   timezone={settings.timezone}
                   index={i}
-                  tone={TONES[i % TONES.length]}
-                  filedLabel="on today's page"
+                  filedLabel="Bound in"
                   onOpen={startEdit}
                   current={editing?.id === s.id}
                 />

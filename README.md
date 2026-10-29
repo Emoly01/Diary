@@ -1,9 +1,10 @@
 # Daybook
 
-A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md);
-the design boards it builds from are exported in `design/project/`.
+A private sticker journal. One person, one book. The full brief is in [BRIEF.md](BRIEF.md), and
+the redesign in [REDESIGN.md](REDESIGN.md), which wins where they disagree. The current design
+boards are in `design/redesign/`; the pastel ones in `design/project/` are kept for history.
 
-**Status:** v1. All five phases are built:
+**Status:** all six phases are built:
 - **Phase 1:** Google sign-in, the owner lock, Firestore rules and tests, theme and fonts, the app shell.
 - **Phase 2:** quick capture at `/catch` (text, photo, mood) that works offline, the scrap tray on the
   desk, and installing as an app.
@@ -13,6 +14,10 @@ the design boards it builds from are exported in `design/project/`.
   the device or a pasted link, and drag, rotate, scale, delete and stacking order for every sticker.
 - **Phase 5:** On this day, the Pages archive with search, and the settings sheet (day start, export,
   sign out).
+- **Phase 6, ember grimoire:** the desk as an open book (the pocket page, today's page, index tabs,
+  the inkwell tray and the sticker cabinet), 27 watercolour stickers, word labels, mood moons and ten
+  washi tapes that stretch, the 640 px page (older pages are converted when opened), and the new
+  look for Catch, Pages, Settings, Sign in and Locked.
 
 ## Run it locally
 

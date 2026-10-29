@@ -1,11 +1,12 @@
-import type { Page, PageContent } from './pages';
+import { LAYOUT, stickersFromData, type Page, type PageContent } from './pages';
 
 // The safety net for "a quick reload never loses text": every keystroke is
 // copied here synchronously, and the page is saved to Firestore a second
 // after typing stops (or at once when the tab hides). On load, a draft newer
 // than the saved page wins.
 
-export type Draft = PageContent & { editedAt: number };
+/** `layout` as on pages: drafts written before the redesign hold 960 px positions. */
+export type Draft = PageContent & { editedAt: number; layout?: number };
 
 const key = (uid: string, day: string) => `daybook:draft:${uid}:${day}`;
 
@@ -14,7 +15,8 @@ export function readDraft(uid: string, day: string): Draft | null {
     const raw = localStorage.getItem(key(uid, day));
     if (!raw) return null;
     const d = JSON.parse(raw) as Draft;
-    return typeof d.editedAt === 'number' && d.body ? d : null;
+    if (typeof d.editedAt !== 'number' || !d.body) return null;
+    return { ...d, stickers: stickersFromData(d.stickers, d.layout), layout: LAYOUT };
   } catch {
     return null;
   }
@@ -22,7 +24,7 @@ export function readDraft(uid: string, day: string): Draft | null {
 
 export function writeDraft(uid: string, day: string, draft: Draft): void {
   try {
-    localStorage.setItem(key(uid, day), JSON.stringify(draft));
+    localStorage.setItem(key(uid, day), JSON.stringify({ ...draft, layout: LAYOUT }));
   } catch {
     // Storage full or disabled: Firestore's own queue still has the last save.
   }

@@ -60,13 +60,15 @@ export default function AccountMenu() {
         {initial}
       </button>
       {open && (
-        <SlideOver side="right" label="settings-heading" closeLabel="Close settings" onClose={() => setOpen(false)}>
+        <SlideOver side="right" label="settings-heading" closeLabel="Close settings" onClose={() => setOpen(false)} variant="page">
           <div className="settings">
             <h2 id="settings-heading">Settings</h2>
-            <div className="settings-who">
-              <strong>{user.displayName}</strong>
-              <span className="label">{user.email}</span>
-            </div>
+            {(user.displayName || user.email) && (
+              <div className="settings-who">
+                {user.displayName && <strong>{user.displayName}</strong>}
+                {user.email && <span className="label">{user.email}</span>}
+              </div>
+            )}
 
             <section className="settings-block">
               <label htmlFor="day-start" className="field-label">
@@ -86,9 +88,9 @@ export default function AccountMenu() {
 
             <section className="settings-block">
               <h3 className="field-label">Your book</h3>
-              <button type="button" className="btn btn-primary" onClick={runExport} disabled={exp.kind === 'working'}>
+              <button type="button" className="btn btn-ember settings-export" onClick={runExport} disabled={exp.kind === 'working'}>
                 <DownloadIcon />
-                {exp.kind === 'working' ? 'Gathering everything…' : 'Export everything'}
+                {exp.kind === 'working' ? 'Copying it out…' : 'Copy out the whole book'}
               </button>
               <p className="settings-hint" role="status">
                 {exp.kind === 'idle' && 'One JSON file with every page, scrap and photo.'}
@@ -104,7 +106,7 @@ export default function AccountMenu() {
 
             <button type="button" className="btn btn-quiet settings-signout" onClick={() => void signOut()}>
               <SignOutIcon />
-              Sign out
+              Close the book
             </button>
           </div>
         </SlideOver>
