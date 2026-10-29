@@ -1,31 +1,40 @@
-import Star from './stickers/Star';
-import Heart from './stickers/Heart';
-import Cat from './stickers/Cat';
-import Sparkle from './stickers/Sparkle';
+import { bookDay, deviceTimezone } from '../data/day';
+import { bookLine } from '../data/roman';
+import Filigree, { FILIGREE_CORNERS } from './Filigree';
+import { Mark } from './Logo';
+import WaxSeal from './WaxSeal';
 import './Cover.css';
 
-const RINGS = Array.from({ length: 9 }, (_, i) => i);
-
-/** The pink spiral-planner cover from the "Sign in" board. */
-export default function Cover() {
+/**
+ * The closed book: forest leather on the ember-lit desk, the tooled double
+ * border, the filigree corners, Daybook foil-stamped in gold. `locked` adds
+ * a wax-sealed clasp across it.
+ */
+export default function Cover({ locked = false }: { locked?: boolean }) {
+  // Before sign-in there are no settings yet: the device's date says which year.
+  const today = bookDay(new Date(), '04:00', deviceTimezone());
   return (
-    <div className="cover" aria-hidden="true">
-      <div className="cover-board" />
-      <div className="cover-rings">
-        {RINGS.map((i) => (
-          <span key={i} className="cover-ring" />
+    <div className={`closed-book${locked ? ' is-locked' : ''}`} aria-hidden="true">
+      <div className="closed-book-cover">
+        {FILIGREE_CORNERS.map((at) => (
+          <Filigree key={at} at={at} size={64} />
         ))}
+        <div className="closed-book-plate">
+          <Mark size={34} />
+          <span className="closed-book-title">Daybook</span>
+          <svg viewBox="0 0 160 10" width="120" height="10" className="closed-book-rule">
+            <path d="M0 5h66M94 5h66" stroke="#C9A45C" strokeWidth="1" />
+            <path d="M80 1l4 4-4 4-4-4z" fill="#C9A45C" />
+          </svg>
+          <span className="closed-book-line">{bookLine(today, null)}</span>
+        </div>
+        {locked && (
+          <div className="closed-book-clasp">
+            <span className="closed-book-strap" />
+            <WaxSeal size={70} className="closed-book-seal" />
+          </div>
+        )}
       </div>
-      <div className="cover-washi" />
-      <div className="cover-label">
-        <div className="cover-title">Daybook</div>
-        <div className="cover-est">est. 2026</div>
-      </div>
-      <Star size={58} tilt={12} style={{ position: 'absolute', top: 30, right: 26 }} />
-      <Heart size={52} tilt={-10} style={{ position: 'absolute', bottom: 50, left: 34 }} />
-      <Cat size={76} tilt={8} style={{ position: 'absolute', bottom: 16, right: 22 }} />
-      <Sparkle size={18} style={{ position: 'absolute', top: 76, left: 30 }} />
-      <Sparkle size={14} color="var(--butter)" style={{ position: 'absolute', top: 250, left: 120 }} />
     </div>
   );
 }

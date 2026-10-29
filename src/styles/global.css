@@ -126,6 +126,14 @@ button {
   cursor: not-allowed;
 }
 
+/* Nothing to tuck in yet: an ember outline, not a muddy fill. */
+.btn-primary:disabled {
+  opacity: 1;
+  border-color: rgba(232, 116, 42, 0.5);
+  background: transparent;
+  color: var(--on-desk-soft);
+}
+
 /* A hairline button that takes its colour from where it sits. */
 .btn-quiet {
   border-color: currentColor;
@@ -253,38 +261,4 @@ button {
   top: 50%;
   right: 16px;
   margin-top: -22px;
-}
-
-/*
- * v1 bridge (temporary): the screens not rebuilt yet keep their light
- * surfaces, so their text goes back to ink there. Removed in step 3.
- */
-.page-surface,
-.pages-card,
-.pages-search,
-.catch-tray,
-.catch-card,
-.gate-uid,
-.settings-block,
-.mood-option {
-  color: var(--ink);
-}
-
-.gate .label,
-.gate-copy p,
-.catch .label {
-  color: var(--on-desk-soft);
-}
-
-.cover-label {
-  color: var(--ink);
-}
-
-.catch .mood-option {
-  color: var(--on-desk);
-}
-
-.catch .mood-option[aria-pressed='true'] {
-  border-color: var(--ember);
-  color: var(--ember-light);
 }

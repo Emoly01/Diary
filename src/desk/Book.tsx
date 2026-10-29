@@ -1,21 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import Filigree, { FILIGREE_CORNERS } from '../components/Filigree';
 import { monthName } from '../data/roman';
-
-/** The board's art nouveau corner, drawn for the top left and mirrored for the others. */
-function Corner({ at }: { at: 'tl' | 'tr' | 'bl' | 'br' }) {
-  return (
-    <svg viewBox="0 0 90 90" width="78" height="78" aria-hidden="true" className={`book-corner book-corner-${at}`}>
-      <g fill="none" stroke="#D9B46A" strokeLinecap="round">
-        <path d="M4 86V30C4 14 14 4 30 4h56" strokeWidth="1.4" />
-        <path d="M18 20c12 2 16 14 8 20-6 4-12-2-8-8 4-6 13-2 11 6" strokeWidth="1.2" />
-      </g>
-      <path d="M44 4c6 7 6 14 0 18-6-4-6-11 0-18z" fill="#D9B46A" opacity="0.85" />
-      <path d="M4 44c7 6 14 6 18 0-4-6-11-6-18 0z" fill="#D9B46A" opacity="0.85" />
-      <circle cx="18" cy="20" r="2.4" fill="#E8742A" />
-    </svg>
-  );
-}
 
 /**
  * The index tabs on the cover's right edge: Today · Pages · this month ·
@@ -67,10 +53,9 @@ export default function Book({
     <div className={`book${left ? ' book-spread' : ' book-single'}`}>
       {tabs}
       <div className="book-cover">
-        <Corner at="tl" />
-        <Corner at="tr" />
-        <Corner at="bl" />
-        <Corner at="br" />
+        {FILIGREE_CORNERS.map((at) => (
+          <Filigree key={at} at={at} />
+        ))}
         {left}
         {right}
       </div>

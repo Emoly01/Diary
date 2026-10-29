@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
 import MoodMoon from '../components/MoodMoon';
+import { SearchIcon } from '../components/Icons';
 import { useOwner } from '../auth/AuthProvider';
 import { formatDayLong } from '../data/day';
+import { countWord } from '../data/roman';
 import { makeSearch, snippet, useAllPages, type PageSummary } from '../data/memory';
 import { PresetArt } from '../stickers/presets';
 import { WashiStrip } from '../stickers/washi';
@@ -45,7 +47,7 @@ function PageCard({ page }: { page: PageSummary }) {
     <Link to={`/day/${page.day}`} className="pages-card">
       <span className="pages-card-top">
         <span className="label">{shortDay(page.day)}</span>
-        {page.mood && <MoodMoon mood={page.mood} size={24} />}
+        {page.mood && <MoodMoon mood={page.mood} size={22} />}
       </span>
       <span className="pages-card-title">{page.title || 'Untitled'}</span>
       <span className="pages-card-foot">
@@ -92,26 +94,25 @@ export default function Pages() {
       <AppHeader />
       <main className="pages">
         <div className="pages-head">
-          <h1>Pages</h1>
+          <h1>The pages</h1>
           <div className="pages-search">
-            <label htmlFor="pages-search" className="visually-hidden">
-              Search your pages
+            <label htmlFor="pages-search" className="pages-search-label">
+              Search the book
             </label>
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="6.5" />
-              <path d="M16 16l4 4" />
-            </svg>
-            <input
-              id="pages-search"
-              ref={searchRef}
-              type="search"
-              placeholder="Search your pages"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setParams(e.target.value ? { q: e.target.value } : {}, { replace: true });
-              }}
-            />
+            <span className="pages-search-field">
+              <SearchIcon />
+              <input
+                id="pages-search"
+                ref={searchRef}
+                type="search"
+                placeholder="A word, a name, a place…"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setParams(e.target.value ? { q: e.target.value } : {}, { replace: true });
+                }}
+              />
+            </span>
           </div>
         </div>
 
@@ -136,7 +137,11 @@ export default function Pages() {
         ) : searching ? (
           <section aria-labelledby="results-heading">
             <h2 id="results-heading" className="pages-month">
-              {results.length === 0 ? 'Nothing found' : results.length === 1 ? '1 page' : `${results.length} pages`}
+              {results.length === 0
+                ? 'Nothing in here by that name. Yet.'
+                : results.length === 1
+                  ? 'One page'
+                  : `${countWord(results.length).replace(/^./, (c) => c.toUpperCase())} pages`}
             </h2>
             <ul className="pages-results">
               {results.map(({ item, matches }) => {

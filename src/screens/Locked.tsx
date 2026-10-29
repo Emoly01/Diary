@@ -24,7 +24,7 @@ export default function Locked({ uid }: { uid: string }) {
 
   return (
     <main className="gate">
-      <Cover />
+      <Cover locked />
       <div className="gate-copy">
         <h1>This book is locked.</h1>
         <p>It belongs to someone else, so you’ve been signed out.</p>
@@ -35,7 +35,7 @@ export default function Locked({ uid }: { uid: string }) {
         <div className="gate-uid">
           <span className="label">No owner set yet. This account’s ID:</span>
           <code>{uid}</code>
-          <button type="button" className="btn btn-quiet" onClick={copy}>
+          <button type="button" className="btn btn-quiet gate-copy-btn" onClick={copy}>
             <CopyIcon />
             {copied ? 'Copied' : 'Copy ID'}
           </button>
@@ -43,7 +43,7 @@ export default function Locked({ uid }: { uid: string }) {
       )}
 
       <div className="gate-actions">
-        <button type="button" className="btn btn-quiet" onClick={dismissLocked}>
+        <button type="button" className="btn btn-gold" onClick={dismissLocked}>
           Back to the cover
         </button>
       </div>

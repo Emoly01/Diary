@@ -1,13 +1,13 @@
-/* Shared layout for the screens shown before the book opens. */
+/* Shared layout for the screens shown before the book opens: the closed book on the ember-lit desk. */
 .gate {
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 40px 24px 32px;
+  padding: 48px 24px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 36px;
 }
 
 .gate-copy {
@@ -19,15 +19,19 @@
 }
 
 .gate-copy h1 {
-  font-size: 29px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--on-desk);
 }
 
 .gate-copy p {
   margin: 0;
-  max-width: 300px;
+  max-width: 320px;
   font-size: 17px;
+  font-style: italic;
   line-height: 1.5;
-  color: var(--ink-soft);
+  color: var(--on-desk-soft);
 }
 
 .gate-actions {
@@ -39,37 +43,61 @@
   gap: 16px;
 }
 
-.gate-actions .btn-primary {
+.gate-actions .label {
+  color: var(--on-desk-soft);
+}
+
+/* "Continue with Google": parchment, ink, a gold hairline. */
+.gate-google {
   width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--gold-edge);
+  background: var(--parchment);
+  color: var(--ink);
+  font-size: 13px;
+  box-shadow: inset 0 0 0 3px var(--parchment), inset 0 0 0 4px rgba(201, 164, 92, 0.6), 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.gate-google:hover {
+  background: var(--slip);
+  color: var(--ember-ink);
 }
 
 .gate-error {
   margin: 0;
   padding: 10px 14px;
-  border-radius: var(--radius-card-sm);
-  background: var(--pink-3);
+  border-radius: 4px;
+  background: var(--slip);
+  color: var(--oxblood);
   font-size: 15px;
   text-align: center;
 }
 
+/* The owner-UID row, as in v1: mono on parchment. */
 .gate-uid {
   width: 100%;
   max-width: 342px;
-  padding: 14px 16px;
-  border-radius: var(--radius-card-sm);
-  background: var(--page);
-  box-shadow: var(--shadow-card);
+  padding: 16px 18px;
+  border-radius: 4px;
+  background: var(--parchment);
+  color: var(--ink);
+  box-shadow: var(--shadow-page);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+
+.gate-uid .label {
+  color: var(--ink-soft);
 }
 
 .gate-uid code {
+  font-family: var(--font-label);
   font-size: 14px;
   word-break: break-all;
 }
 
-.gate-uid .btn {
+.gate-copy-btn {
   align-self: flex-start;
 }
 

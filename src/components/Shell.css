@@ -117,11 +117,3 @@
   font-size: 21px;
   cursor: pointer;
 }
-
-/* v1 paper surface: still the Catch form until step 3 */
-.page-surface {
-  position: relative;
-  background-color: var(--page);
-  border-radius: var(--radius-page);
-  box-shadow: var(--shadow-page);
-}

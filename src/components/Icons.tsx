@@ -17,14 +17,6 @@ export function LockIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-export function TrayIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg {...base} width={size} height={size} strokeWidth={2}>
-      <path d="M4 13l2.5-7h11l2.5 7v6H4z" />
-      <path d="M4 13h5l1 2h4l1-2h5" />
-    </svg>
-  );
-}
 
 export function CopyIcon({ size = 18 }: { size?: number }) {
   return (
@@ -44,14 +36,6 @@ export function SignOutIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export function CameraIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg {...base} width={size} height={size} strokeWidth={2}>
-      <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
-      <circle cx="12" cy="13" r="3.5" />
-    </svg>
-  );
-}
 
 export function TuckIcon({ size = 20 }: { size?: number }) {
   return (
