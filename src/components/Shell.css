@@ -12,50 +12,37 @@
   }
 }
 
-/* Logo */
+/* Logo: crescent-and-flame, then Daybook in Cormorant italic gold */
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-height: var(--tap);
   text-decoration: none;
 }
 
-.logo-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-pill);
-  background: var(--pink);
-  border: 3px solid #fff;
-  box-shadow: 0 3px 8px rgba(94, 72, 140, 0.2);
-  transform: rotate(-8deg);
-}
-
 .logo-word {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 32px;
+  font-style: italic;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--gold);
 }
 
 .logo-sm {
   gap: 10px;
 }
 
-.logo-sm .logo-badge {
-  width: 34px;
-  height: 34px;
-}
-
 .logo-sm .logo-word {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 /* Header */
 .app-header {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -63,108 +50,78 @@
   gap: 12px 24px;
 }
 
-.app-nav {
+.app-header-start {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.nav-pill {
-  display: inline-flex;
   align-items: center;
-  min-height: var(--tap);
-  padding: 0 18px;
-  border-radius: var(--radius-pill);
-  text-decoration: none;
+  gap: 4px 14px;
 }
 
-.nav-pill[aria-current='page'] {
-  background: #fff;
-  box-shadow: 0 2px 0 rgba(94, 72, 140, 0.1);
+.app-book-line {
+  font-family: var(--font-label);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-desk-soft);
 }
 
-/* "Search" shares /pages with "Pages"; only Pages shows as current. */
-.nav-search[aria-current='page'] {
-  background: none;
-  box-shadow: none;
+.app-header-end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Phone: logo and account on top, the nav on its own row below. */
-@media (max-width: 899px) {
-  .app-header > .app-nav {
-    order: 3;
-    width: 100%;
-  }
-}
-
-/* On a phone, Catch is the way back to capturing. */
-.nav-catch {
+/* At the desk the tabs lead everywhere; on a phone, Catch is the way back. */
+.app-catch {
   display: none;
 }
 
 @media (max-width: 899px) {
-  .nav-catch {
+  .app-catch {
     display: inline-flex;
+  }
+
+  .app-book-line {
+    display: none;
   }
 }
 
-/* Account */
+.round-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(217, 180, 106, 0.45);
+  background: rgba(30, 21, 18, 0.7);
+  color: var(--gold);
+}
+
+.round-btn:hover {
+  color: var(--on-desk);
+}
+
+/* Account: the owner's initial in an ember ring */
 .account-button {
   width: var(--tap);
   height: var(--tap);
   border-radius: var(--radius-pill);
-  border: 3px solid #fff;
-  background: var(--mint);
+  border: 1px solid var(--ember);
+  background: rgba(232, 116, 42, 0.14);
+  color: var(--ember-light);
   font-family: var(--font-display);
+  font-style: italic;
   font-weight: 600;
-  font-size: 18px;
-  box-shadow: 0 2px 6px rgba(94, 72, 140, 0.2);
+  font-size: 21px;
   cursor: pointer;
 }
 
-/* Journal page surface */
+/* v1 paper surface: still the Catch form until step 3 */
 .page-surface {
   position: relative;
   background-color: var(--page);
-  background-image:
-    linear-gradient(var(--page-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--page-grid) 1px, transparent 1px);
-  background-size: 22px 22px;
   border-radius: var(--radius-page);
   box-shadow: var(--shadow-page);
-}
-
-.spiral {
-  position: absolute;
-  top: 34px;
-  bottom: 34px;
-  left: -18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.spiral span {
-  display: block;
-  width: 38px;
-  height: 11px;
-  border-radius: var(--radius-pill);
-  background: var(--lilac-2);
-  border: 2px solid #fff;
-  box-shadow: 0 2px 3px rgba(94, 72, 140, 0.25);
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 0 14px;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 500;
 }

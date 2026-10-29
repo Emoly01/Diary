@@ -19,6 +19,7 @@ import { photosCol } from '../data/paths';
 import type { PreparedPhoto } from '../data/photos';
 import type { Scrap } from '../data/scraps';
 import { bottomZ, clampPosition, newSticker, topZ } from '../stickers/geometry';
+import { Illuminated } from './illuminated';
 
 const AUTOSAVE_MS = 1000;
 
@@ -53,15 +54,15 @@ export type PageSession = {
   sendToBack: (id: string) => void;
 };
 
-/** Where a newly filed photo lands: the right-hand column, cascading down. */
+/** Where a newly filed photo lands: the right-hand side, cascading down. */
 function nextPolaroid(photoId: string, stickers: Sticker[]): Sticker {
   const photos = stickers.filter((s) => s.kind === 'photo').length;
   return clampPosition({
     id: crypto.randomUUID(),
     kind: 'photo',
     ref: photoId,
-    x: 606 + (photos % 2) * 56,
-    y: 150 + photos * 120,
+    x: 380 + (photos % 2) * 37,
+    y: 100 + photos * 80,
     rotation: photos % 2 ? 3 : -3,
     scale: 1,
     z: topZ(stickers),
@@ -146,7 +147,7 @@ export function usePageSession(
   );
 
   const editor = useEditor({
-    extensions: [StarterKit.configure({ heading: { levels: [2, 3] } })],
+    extensions: [StarterKit.configure({ heading: { levels: [2, 3] } }), Illuminated],
     content: emptyBody(),
     editable: false,
     editorProps: { attributes: { class: 'page-body', 'aria-label': 'Page text' } },
@@ -201,6 +202,12 @@ export function usePageSession(
       } else {
         show(page ?? emptyContent(), start.editedAt);
         setStatus(page ? { kind: 'saved', editedAt: page.editedAt } : { kind: 'idle' });
+        // Saved before layout 2: keep the converted stickers, once, at the desk.
+        if (page?.migrated && !readOnly) {
+          editedAt.current = page.editedAt;
+          dirty.current = true;
+          flush();
+        }
       }
       return;
     }
@@ -214,7 +221,7 @@ export function usePageSession(
       show(page, page.editedAt);
       setStatus({ kind: 'saved', editedAt: page.editedAt });
     }
-  }, [pageState, editor, uid, day, show, flush]);
+  }, [pageState, editor, uid, day, readOnly, show, flush]);
 
   // Save at once when the tab hides or the page goes away.
   useEffect(() => {

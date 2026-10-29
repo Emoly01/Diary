@@ -1,23 +1,24 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import { TrashIcon, TrayIcon } from '../components/Icons';
+import { TrashIcon } from '../components/Icons';
 import SlideOver from '../components/SlideOver';
-import Sparkle from '../components/stickers/Sparkle';
 import { useOwner } from '../auth/AuthProvider';
-import { bookDay, formatDayLong, isBookDay } from '../data/day';
+import { bookDay, formatClock, formatDayLong, isBookDay } from '../data/day';
 import { PAGE_WIDTH } from '../data/pages';
-import StickerSheet from '../stickers/StickerSheet';
-import { stickerLabel } from '../stickers/StickerLayer';
+import type { Scrap } from '../data/scraps';
 import { usePageScraps, useTrayScraps } from '../data/scraps';
 import { useSettings } from '../data/settings';
+import Book, { BookTabs, Ribbon } from '../desk/Book';
 import DeskPage from '../desk/DeskPage';
 import EditorToolbar from '../desk/EditorToolbar';
 import OnThisDay from '../desk/OnThisDay';
-import Tray from '../desk/Tray';
+import PocketPage from '../desk/PocketPage';
 import { usePageSession } from '../desk/usePageSession';
+import InkwellTray from '../stickers/InkwellTray';
+import { stickerLabel } from '../stickers/StickerLayer';
 import { useBookStatus } from '../useBookStatus';
-import { useLayout, useSheetInRail } from '../useMediaQuery';
+import { useLayout } from '../useMediaQuery';
 import { useNow } from '../useNow';
 import '../components/Shell.css';
 import './Desk.css';
@@ -38,42 +39,62 @@ export default function Desk() {
       key={day}
       uid={uid}
       day={day}
-      isToday={day === today}
+      today={today}
       timezone={settings.timezone}
       startedAt={settings.startedAt}
     />
   );
 }
 
+// Room for about this much italic text beside the time on a photo's frame.
+const CAPTION_CHARS = 22;
+
+/** A photo's caption from the scrap it came with: its first words and the time it was caught. */
+function captionsFrom(scraps: Scrap[], timezone: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const s of scraps) {
+    if (!s.photoId) continue;
+    // The first sentence, cut back to whole words that fit.
+    let lead = '';
+    for (const word of s.text.trim().split(/[.!?\n]/)[0].split(/\s+/).filter(Boolean)) {
+      if (lead && lead.length + word.length + 1 > CAPTION_CHARS) break;
+      lead = lead ? `${lead} ${word}` : word;
+    }
+    lead = lead.replace(/[,;:]+$/, '');
+    const at = formatClock(s.capturedAt, timezone);
+    out[s.photoId] = lead ? `${lead}, ${at}` : at;
+  }
+  return out;
+}
+
 function DeskForDay({
   uid,
   day,
-  isToday,
+  today,
   timezone,
   startedAt,
 }: {
   uid: string;
   day: string;
-  isToday: boolean;
+  today: string;
   timezone: string;
   startedAt: Date | null;
 }) {
+  const isToday = day === today;
   const layout = useLayout();
   // `?read` (from On this day) opens a page to look at, not to edit.
   const [params] = useSearchParams();
   const reading = params.has('read');
   const readOnly = layout === 'phone' || reading;
-  // Below 1600 px the sheet slides over from the right, opened from the header.
-  const sheetInRail = useSheetInRail();
-  const sheetAsPanel = !readOnly && !sheetInRail;
   const status = useBookStatus(uid);
   const unfiled = useTrayScraps(uid);
   const filed = usePageScraps(uid, day);
   const keepPhotoIds = filed.flatMap((s) => (s.photoId ? [s.photoId] : []));
   const session = usePageSession(uid, day, readOnly, keepPhotoIds);
-  const [panel, setPanel] = useState<'tray' | 'sheet' | null>(null);
+  const [pocketOpen, setPocketOpen] = useState(false);
   const pageRef = useRef<HTMLElement>(null);
   const selected = session.content.stickers.find((s) => s.id === session.selected);
+  const captions = useMemo(() => captionsFrom(filed, timezone), [filed, timezone]);
 
   /** The middle of the page's visible part, in logical px: where a new sticker lands. */
   const visibleCenter = () => {
@@ -81,69 +102,33 @@ function DeskForDay({
     if (!r) return { x: PAGE_WIDTH / 2, y: 300 };
     const scale = r.width / PAGE_WIDTH;
     const top = Math.max(r.top, 0);
-    const bottom = Math.min(r.bottom, window.innerHeight);
-    return { x: PAGE_WIDTH / 2, y: ((top + bottom) / 2 - r.top) / scale };
-  };
-  // As a slide-over the sheet covers the page, so it closes once something is added.
-  const added = () => {
-    if (sheetAsPanel) setPanel(null);
+    // The tray floats over the bottom of the window.
+    const bottom = Math.min(r.bottom, window.innerHeight - 80);
+    return { x: PAGE_WIDTH / 2, y: Math.max(0, ((top + bottom) / 2 - r.top) / scale) };
   };
 
-  const sheet = (
-    <StickerSheet
-      onSticker={(n) => {
-        session.addSticker('preset', n, visibleCenter());
-        added();
-      }}
-      onWashi={(n) => {
-        session.addSticker('washi', n, visibleCenter());
-        added();
-      }}
-      onPhoto={(p) => {
-        session.addPhoto(p, visibleCenter());
-        added();
-      }}
-      onLink={(u) => {
-        session.addSticker('link', u, visibleCenter());
-        added();
-      }}
-    />
-  );
+  const letter = <OnThisDay uid={uid} day={day} startedAt={startedAt} />;
 
-  const memories = <OnThisDay uid={uid} day={day} isToday={isToday} startedAt={startedAt} />;
-
-  const tray = (
-    <Tray
+  const pocket = (headingId?: string) => (
+    <PocketPage
       uid={uid}
       timezone={timezone}
+      today={today}
+      isToday={isToday}
       unfiled={unfiled}
       filed={filed}
-      filedLabel={isToday ? 'on today’s page' : 'on this page'}
       onFile={readOnly ? undefined : session.file}
+      letter={letter}
+      headingId={headingId}
     />
   );
 
-  return (
-    <div className="app">
-      <AppHeader
-        actions={
-          <>
-            {layout === 'tablet' && (
-              <button type="button" className="btn desk-tray-toggle" aria-expanded={panel === 'tray'} onClick={() => setPanel('tray')}>
-                <TrayIcon />
-                Tray · {unfiled.length}
-              </button>
-            )}
-            {sheetAsPanel && (
-              <button type="button" className="btn desk-tray-toggle" aria-expanded={panel === 'sheet'} onClick={() => setPanel('sheet')}>
-                <Sparkle size={16} color="var(--accent)" />
-                Stickers
-              </button>
-            )}
-          </>
-        }
-      />
+  const page = (
+    <DeskPage uid={uid} day={day} session={session} timezone={timezone} readOnly={readOnly} pageRef={pageRef} captions={captions} />
+  );
 
+  const banners = (
+    <>
       {status === 'denied' && (
         <p className="desk-banner" role="alert">
           The lock refused this account. Check the UID in firestore.rules.
@@ -156,63 +141,89 @@ function DeskForDay({
       ) : (
         reading && (
           <p className="desk-banner">
-            You’re reading {formatDayLong(day)}. <Link to={`/day/${day}`}>Edit this page</Link>
+            You’re reading {formatDayLong(day)}. <Link to={`/day/${day}`}>Write in this page</Link>
           </p>
         )
       )}
+    </>
+  );
+
+  // Phone: no book, just the page to read and the letter.
+  if (layout === 'phone') {
+    return (
+      <div className="app">
+        <AppHeader />
+        {banners}
+        <main className="phone-desk">
+          <section className="phone-page" aria-label={isToday ? 'Today’s page' : 'Page'}>
+            {page}
+          </section>
+          {letter}
+        </main>
+      </div>
+    );
+  }
+
+  const tools = !readOnly && session.editor && (
+    <div className="desk-tools">
+      <EditorToolbar editor={session.editor} />
+      {selected && (
+        <div className="sticker-tools" role="toolbar" aria-label={`${stickerLabel(selected)} options`}>
+          <button type="button" className="btn btn-gold" onClick={() => session.bringToFront(selected.id)}>
+            To front
+          </button>
+          <button type="button" className="btn btn-gold" onClick={() => session.sendToBack(selected.id)}>
+            To back
+          </button>
+          <button type="button" className="btn btn-gold" onClick={() => session.removeSticker(selected.id)}>
+            <TrashIcon />
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const tray = !readOnly && (
+    <InkwellTray
+      onSticker={(n) => session.addSticker('preset', n, visibleCenter())}
+      onWashi={(n) => session.addSticker('washi', n, visibleCenter())}
+      onPhoto={(p) => session.addPhoto(p, visibleCenter())}
+      onLink={(u) => session.addSticker('link', u, visibleCenter())}
+    />
+  );
+
+  return (
+    <div className="app app-desk">
+      <AppHeader
+        actions={
+          layout === 'tablet' && (
+            <button type="button" className="btn btn-gold" aria-expanded={pocketOpen} onClick={() => setPocketOpen(true)}>
+              The pocket · {unfiled.length}
+            </button>
+          )
+        }
+      />
+      {banners}
+      {tools}
 
       <main className="desk">
-        {layout === 'desk' && (
-          <aside className="desk-tray" aria-labelledby="tray-heading">
-            {!sheetInRail && memories}
-            {tray}
-          </aside>
-        )}
-
-        <section className="desk-page-col" aria-label={isToday ? 'Today’s page' : 'Page'}>
-          {!readOnly && session.editor && (
-            <div className="desk-tools">
-              <EditorToolbar editor={session.editor} />
-              {selected && (
-                <div className="sticker-tools" role="toolbar" aria-label={`${stickerLabel(selected)} options`}>
-                  <button type="button" className="btn btn-quiet" onClick={() => session.bringToFront(selected.id)}>
-                    To front
-                  </button>
-                  <button type="button" className="btn btn-quiet" onClick={() => session.sendToBack(selected.id)}>
-                    To back
-                  </button>
-                  <button type="button" className="btn btn-quiet" onClick={() => session.removeSticker(selected.id)}>
-                    <TrashIcon />
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-          <DeskPage uid={uid} day={day} session={session} timezone={timezone} readOnly={readOnly} pageRef={pageRef} />
-        </section>
-
-        {layout === 'desk' && sheetInRail && (
-          <aside className="desk-rail">
-            {memories}
-            {!readOnly && sheet}
-          </aside>
-        )}
+        <Book
+          tabs={<BookTabs today={today} isToday={isToday} />}
+          left={layout === 'desk' && <div className="book-page book-page-left">{pocket('pocket-heading')}</div>}
+          right={
+            <section className="book-page book-page-right" aria-label={isToday ? 'Today’s page' : 'Page'}>
+              <Ribbon />
+              {page}
+            </section>
+          }
+          tray={tray}
+        />
       </main>
 
-      {layout === 'phone' && <div className="desk-phone-memories">{memories}</div>}
-
-      {layout === 'tablet' && panel === 'tray' && (
-        <SlideOver side="left" label="tray-heading" closeLabel="Close tray" onClose={() => setPanel(null)}>
-          <div className="desk-panel-stack">
-            {memories}
-            {tray}
-          </div>
-        </SlideOver>
-      )}
-      {sheetAsPanel && panel === 'sheet' && (
-        <SlideOver side="right" label="sheet-heading" closeLabel="Close sticker sheet" onClose={() => setPanel(null)}>
-          {sheet}
+      {layout === 'tablet' && pocketOpen && (
+        <SlideOver side="left" label="pocket-panel-heading" closeLabel="Close the pocket" onClose={() => setPocketOpen(false)} variant="page">
+          {pocket('pocket-panel-heading')}
         </SlideOver>
       )}
     </div>

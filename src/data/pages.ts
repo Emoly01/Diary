@@ -8,7 +8,7 @@ import type { PreparedPhoto } from './photos';
 
 export type StickerKind = 'preset' | 'washi' | 'custom' | 'photo' | 'link';
 
-/** Positions are logical px on the 960 px page, so they hold on every screen. */
+/** Positions are logical px on the 640 px page, so they hold on every screen. */
 export type Sticker = {
   id: string;
   kind: StickerKind;
@@ -19,6 +19,11 @@ export type Sticker = {
   rotation: number;
   scale: number;
   z: number;
+  /**
+   * Washi only: the tape's unscaled length in logical px, once it has been
+   * stretched. Absent means the default length. Never stored as undefined.
+   */
+  length?: number;
 };
 
 /** What the owner edits on a page. */
@@ -32,12 +37,32 @@ export type PageContent = {
 
 export type Page = PageContent & {
   day: string;
+  /** Read from a page saved before layout 2: its stickers were converted on the way in, and it wants saving. */
+  migrated: boolean;
   /** Client clock (ms) of the last edit. Decides between a draft and the saved page. */
   editedAt: number;
   createdAt: Timestamp | null;
 };
 
-export const PAGE_WIDTH = 960;
+export const PAGE_WIDTH = 640;
+
+/**
+ * Pages saved before the redesign kept sticker positions on a 960 px page.
+ * `layout: 2` marks the 640 px page. Old pages are converted when read, so
+ * every screen sees 640-space; the desk then saves them with `layout: 2`.
+ */
+export const LAYOUT = 2;
+const FROM_960 = 640 / 960;
+
+/** A sticker list from the 960 px page, on the 640 px page. A washi `length` is unscaled, so it stays. */
+export function toLayout2(stickers: Sticker[]): Sticker[] {
+  return stickers.map((s) => ({
+    ...s,
+    x: Math.round(s.x * FROM_960 * 10) / 10,
+    y: Math.round(s.y * FROM_960 * 10) / 10,
+    scale: Math.round(s.scale * FROM_960 * 1000) / 1000,
+  }));
+}
 
 export const emptyBody = (): JSONContent => ({ type: 'doc', content: [{ type: 'paragraph' }] });
 
@@ -77,7 +102,17 @@ export function countWords(text: string): number {
 function isSticker(v: unknown): v is Sticker {
   const s = v as Sticker;
   return !!s && typeof s.id === 'string' && typeof s.kind === 'string' && typeof s.ref === 'string'
-    && [s.x, s.y, s.rotation, s.scale, s.z].every((n) => typeof n === 'number');
+    && [s.x, s.y, s.rotation, s.scale, s.z].every((n) => typeof n === 'number')
+    && (s.length === undefined || typeof s.length === 'number');
+}
+
+/** Stickers as stored: only the fields a sticker has, and no `length` key unless it was stretched. */
+export function stickersFromData(raw: unknown, layout: unknown): Sticker[] {
+  const list: Sticker[] = (Array.isArray(raw) ? raw.filter(isSticker) : []).map(
+    ({ id, kind, ref, x, y, rotation, scale, z, length }: Sticker) =>
+      length === undefined ? { id, kind, ref, x, y, rotation, scale, z } : { id, kind, ref, x, y, rotation, scale, z, length },
+  );
+  return layout === LAYOUT ? list : toLayout2(list);
 }
 
 export function pageFromData(day: string, d: DocumentData): Page {
@@ -86,10 +121,11 @@ export function pageFromData(day: string, d: DocumentData): Page {
     title: typeof d.title === 'string' ? d.title : '',
     body: d.body && typeof d.body === 'object' ? (d.body as JSONContent) : emptyBody(),
     mood: isMood(d.mood) ? d.mood : null,
-    stickers: Array.isArray(d.stickers) ? d.stickers.filter(isSticker) : [],
+    stickers: stickersFromData(d.stickers, d.layout),
     scrapIds: Array.isArray(d.scrapIds) ? d.scrapIds.filter((x: unknown) => typeof x === 'string') : [],
     editedAt: typeof d.editedAt === 'number' ? d.editedAt : 0,
     createdAt: d.createdAt instanceof Timestamp ? d.createdAt : null,
+    migrated: d.layout !== LAYOUT,
   };
 }
 
@@ -151,6 +187,7 @@ export function savePage(
     plainText,
     mood: content.mood,
     stickers: content.stickers,
+    layout: LAYOUT,
     scrapIds: content.scrapIds,
     wordCount: countWords(plainText),
     editedAt: meta.editedAt,

@@ -1,12 +1,12 @@
-import { useRef, type CSSProperties, type KeyboardEvent } from 'react';
+import { memo, useRef, type CSSProperties, type KeyboardEvent } from 'react';
 import { useDrag, useGesture } from '@use-gesture/react';
 import type { Sticker } from '../data/pages';
 import Polaroid from '../components/Polaroid';
 import { usePageScale } from '../components/PageScaler';
-import { CloseIcon } from '../components/Icons';
+import { CloseIcon, StretchIcon } from '../components/Icons';
 import { PresetArt, presetFor } from './presets';
 import { resolveWashi, WASHI, WashiStrip } from './washi';
-import { baseSize, clampScale, normaliseAngle } from './geometry';
+import { baseSize, clampScale, normaliseAngle, resizeWashi, stretchWashi } from './geometry';
 import type { PageSession } from '../desk/usePageSession';
 
 export function stickerLabel(s: Sticker): string {
@@ -22,16 +22,16 @@ export function stickerLabel(s: Sticker): string {
   }
 }
 
-function Art({ uid, s }: { uid: string; s: Sticker }) {
+function Art({ uid, s, caption }: { uid: string; s: Sticker; caption?: string }) {
   switch (s.kind) {
     case 'preset':
       return <PresetArt name={s.ref} />;
     case 'washi':
-      return <WashiStrip name={s.ref} />;
+      return <WashiStrip name={s.ref} length={s.length} />;
     case 'link':
       return <Polaroid uid={uid} url={s.ref} />;
     default:
-      return <Polaroid uid={uid} photoId={s.ref} />;
+      return <Polaroid uid={uid} photoId={s.ref} caption={caption} />;
   }
 }
 
@@ -46,15 +46,28 @@ const ScaleIcon = () => (
   </svg>
 );
 
-/** One sticker. Drag to move, pinch to scale and turn, handles when selected. */
-function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker; session: PageSession; interactive: boolean }) {
+type ItemProps = {
+  uid: string;
+  s: Sticker;
+  session: PageSession;
+  interactive: boolean;
+  /** Whether this one has its handles out. */
+  isSelected: boolean;
+  caption?: string;
+};
+
+/**
+ * One sticker. Drag to move, pinch to scale and turn, handles when selected.
+ * A selected tape also gets a stretch handle on each end.
+ */
+function StickerItemInner({ uid, s, session, interactive, isSelected, caption }: ItemProps) {
   const pageScale = usePageScale();
   const box = useRef<HTMLDivElement>(null);
   const hit = useRef<HTMLButtonElement>(null);
   const live = useRef(s);
   live.current = s;
   const start = useRef(s);
-  const selected = interactive && session.selected === s.id;
+  const selected = interactive && isSelected;
 
   const { w, h } = baseSize(s);
   // Handles keep 44 screen px whatever the page's zoom.
@@ -129,6 +142,18 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
     { enabled: selected },
   );
 
+  // A stretch handle on each end of a tape: only the pointer's movement along the tape counts.
+  const stretch = useDrag(
+    ({ args: [end], xy: [px, py], initial: [ix, iy], first, last, memo }) => {
+      const from = (first ? live.current : memo) as Sticker;
+      const next = stretchWashi(from, end as 'start' | 'end', (px - ix) / pageScale, (py - iy) / pageScale);
+      if (last) session.commitSticker(next);
+      else session.previewSticker(next);
+      return from;
+    },
+    { enabled: selected && s.kind === 'washi' },
+  );
+
   function onKeyDown(e: KeyboardEvent) {
     const cur = live.current;
     const step = e.shiftKey ? 1 : 10;
@@ -143,7 +168,14 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
       '+': { scale: clampScale(Math.round((cur.scale + 0.1) * 100) / 100) },
       '=': { scale: clampScale(Math.round((cur.scale + 0.1) * 100) / 100) },
     };
-    if (e.key === 'Delete' || e.key === 'Backspace') {
+    const longer = e.key === '.' || e.key === '>';
+    const shorter = e.key === ',' || e.key === '<';
+    if (cur.kind === 'washi' && (longer || shorter)) {
+      e.preventDefault();
+      session.select(cur.id);
+      const by = (e.shiftKey ? 1 : 10) * (longer ? 1 : -1);
+      session.commitSticker(resizeWashi(cur, baseSize(cur).w + by, 'start'));
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
       session.removeSticker(cur.id);
     } else if (e.key === 'Escape') {
@@ -168,7 +200,7 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
   if (!interactive) {
     return (
       <div className={`sticker sticker-${s.kind}`} style={style}>
-        <Art uid={uid} s={s} />
+        <Art uid={uid} s={s} caption={caption} />
       </div>
     );
   }
@@ -185,9 +217,9 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
         {...bind()}
         onKeyDown={onKeyDown}
         // Tabbing to a sticker selects it, so keyboard users get its handles and options too.
-        onFocus={() => session.selected !== s.id && session.select(s.id)}
+        onFocus={() => !isSelected && session.select(s.id)}
       >
-        <Art uid={uid} s={s} />
+        <Art uid={uid} s={s} caption={caption} />
       </button>
       {selected && (
         <>
@@ -218,18 +250,67 @@ function StickerItem({ uid, s, session, interactive }: { uid: string; s: Sticker
           >
             <CloseIcon size={Math.round(handle * 0.4)} />
           </button>
+          {s.kind === 'washi' &&
+            (['start', 'end'] as const).map((end) => (
+              <button
+                key={end}
+                type="button"
+                className="sticker-handle sticker-stretch"
+                aria-label={`Stretch from the ${end === 'start' ? 'left' : 'right'} end (or press , and .)`}
+                // Past the corner handles, so the three never overlap on a thin tape.
+                style={{
+                  width: handle,
+                  height: handle,
+                  top: `calc(50% - ${handle / 2}px)`,
+                  [end === 'start' ? 'left' : 'right']: -handle * 1.6,
+                }}
+                {...stretch(end)}
+              >
+                <StretchIcon size={Math.round(handle * 0.45)} />
+              </button>
+            ))}
         </>
       )}
     </div>
   );
 }
 
+/**
+ * Only the sticker that changed re-renders while one is dragged: with 30 on a
+ * page, re-rendering them all on every pointer move drops frames. The
+ * session's callbacks are stable, so a new session object alone doesn't count.
+ */
+const StickerItem = memo(
+  StickerItemInner,
+  (a, b) =>
+    a.s === b.s && a.isSelected === b.isSelected && a.interactive === b.interactive && a.caption === b.caption && a.uid === b.uid,
+);
+
 /** All stickers on the page, above the text. */
-export default function StickerLayer({ uid, session, interactive }: { uid: string; session: PageSession; interactive: boolean }) {
+export default function StickerLayer({
+  uid,
+  session,
+  interactive,
+  captions = {},
+}: {
+  uid: string;
+  session: PageSession;
+  interactive: boolean;
+  /** Captions for photos that came from scraps, by photo id. */
+  captions?: Record<string, string>;
+}) {
   return (
     <div className="desk-stickers">
       {session.content.stickers.map((s) => (
-        <StickerItem key={s.id} uid={uid} s={s} session={session} interactive={interactive} />
+        <StickerItem
+          key={s.id}
+          uid={uid}
+          s={s}
+          session={session}
+          interactive={interactive}
+          isSelected={session.selected === s.id}
+          caption={s.kind === 'photo' ? captions[s.ref] : undefined}
+        />
       ))}
     </div>
   );

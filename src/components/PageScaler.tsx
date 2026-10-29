@@ -6,9 +6,6 @@ const PageScale = createContext(1);
 /** Screen px per logical px for the page being rendered. */
 export const usePageScale = () => useContext(PageScale);
 
-// Room for the spiral rings, which stick out past the page's left edge.
-const GUTTER = 22;
-
 /**
  * Lays the page out at its fixed logical width and scales it to the space
  * available, so text wraps identically and stickers stay put on every screen.
@@ -24,7 +21,7 @@ export default function PageScaler({ children }: { children: ReactNode }) {
     const i = inner.current;
     if (!o || !i) return;
     const measure = () => {
-      const s = Math.min(1, (o.clientWidth - GUTTER) / PAGE_WIDTH);
+      const s = Math.min(1, o.clientWidth / PAGE_WIDTH);
       setScale(s > 0 ? s : 1);
       setHeight(i.offsetHeight);
     };
@@ -37,11 +34,7 @@ export default function PageScaler({ children }: { children: ReactNode }) {
 
   return (
     <div ref={outer} className="page-scaler" style={{ height: height * scale }}>
-      <div
-        ref={inner}
-        className="page-scaler-inner"
-        style={{ width: PAGE_WIDTH, transform: `scale(${scale})`, left: GUTTER }}
-      >
+      <div ref={inner} className="page-scaler-inner" style={{ width: PAGE_WIDTH, transform: `scale(${scale})` }}>
         <PageScale.Provider value={scale}>{children}</PageScale.Provider>
       </div>
     </div>

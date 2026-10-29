@@ -30,8 +30,6 @@ type PhotoState =
   | { kind: 'preparing' }
   | { kind: 'ready'; photo: PreparedPhoto };
 
-const TONES = ['var(--mint-2)', 'var(--butter-2)', 'var(--pink-3)', 'var(--lilac-3)'];
-
 const WRITE_FAILED = 'That one didn’t save. Check you’re still signed in, then try again.';
 
 export default function Catch() {
@@ -286,8 +284,7 @@ export default function Catch() {
                   scrap={s}
                   timezone={settings.timezone}
                   index={i}
-                  tone={TONES[i % TONES.length]}
-                  filedLabel="on today's page"
+                  filedLabel="Bound in"
                   onOpen={startEdit}
                   current={editing?.id === s.id}
                 />
