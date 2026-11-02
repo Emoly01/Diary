@@ -4,6 +4,7 @@ import type { Sticker } from '../data/pages';
 import Polaroid from '../components/Polaroid';
 import { usePageScale } from '../components/PageScaler';
 import { CloseIcon, StretchIcon } from '../components/Icons';
+import CustomArt from './CustomArt';
 import { PresetArt, presetFor } from './presets';
 import { resolveWashi, WASHI, WashiStrip } from './washi';
 import { baseSize, clampScale, normaliseAngle, resizeWashi, stretchWashi } from './geometry';
@@ -17,6 +18,8 @@ export function stickerLabel(s: Sticker): string {
       return WASHI[resolveWashi(s.ref)].label;
     case 'link':
       return 'Linked photo';
+    case 'custom':
+      return 'Your sticker';
     default:
       return 'Photo';
   }
@@ -30,6 +33,8 @@ function Art({ uid, s, caption }: { uid: string; s: Sticker; caption?: string })
       return <WashiStrip name={s.ref} length={s.length} />;
     case 'link':
       return <Polaroid uid={uid} url={s.ref} />;
+    case 'custom':
+      return <CustomArt uid={uid} photoId={s.ref} />;
     default:
       return <Polaroid uid={uid} photoId={s.ref} caption={caption} />;
   }

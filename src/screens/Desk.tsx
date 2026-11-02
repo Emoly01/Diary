@@ -15,6 +15,7 @@ import EditorToolbar from '../desk/EditorToolbar';
 import OnThisDay from '../desk/OnThisDay';
 import PocketPage from '../desk/PocketPage';
 import { usePageSession } from '../desk/usePageSession';
+import { customBox } from '../stickers/geometry';
 import InkwellTray from '../stickers/InkwellTray';
 import { stickerLabel } from '../stickers/StickerLayer';
 import { useBookStatus } from '../useBookStatus';
@@ -186,8 +187,10 @@ function DeskForDay({
 
   const tray = !readOnly && (
     <InkwellTray
+      uid={uid}
       onSticker={(n) => session.addSticker('preset', n, visibleCenter())}
       onWashi={(n) => session.addSticker('washi', n, visibleCenter())}
+      onCustom={(c) => session.addSticker('custom', c.photoId, visibleCenter(), customBox(c.width, c.height))}
       onPhoto={(p) => session.addPhoto(p, visibleCenter())}
       onLink={(u) => session.addSticker('link', u, visibleCenter())}
     />

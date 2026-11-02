@@ -64,7 +64,10 @@ export async function preparePhoto(file: File): Promise<PreparedPhoto> {
   return { data, ...size, bytes: jpeg.size };
 }
 
-export const photoSrc = (data: string) => `data:image/jpeg;base64,${data}`;
+const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+
+/** A stored photo as a data URL. Photos are JPEG; the owner's own stickers keep their PNG, WebP or GIF. */
+export const photoSrc = (data: string, type = 'image/jpeg') => `data:${type};base64,${data}`;
 
 /**
  * The photo's data URL, loaded only once `ref`'s element is near the screen.
@@ -100,7 +103,8 @@ export function usePhoto<T extends Element>(uid: string, photoId: string | null)
       photoDoc(uid, photoId),
       (snap) => {
         const data = snap.get('data');
-        if (typeof data === 'string') setSrc(photoSrc(data));
+        const type = snap.get('type');
+        if (typeof data === 'string') setSrc(photoSrc(data, IMAGE_TYPES.has(type) ? type : undefined));
         else setMissing(true);
       },
       () => setMissing(true),

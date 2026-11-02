@@ -12,7 +12,7 @@ export type StickerKind = 'preset' | 'washi' | 'custom' | 'photo' | 'link';
 export type Sticker = {
   id: string;
   kind: StickerKind;
-  /** Preset name, photoId, or image URL for `link`. */
+  /** Preset name, photoId (for `photo` and `custom`), or image URL for `link`. */
   ref: string;
   x: number;
   y: number;
@@ -24,6 +24,12 @@ export type Sticker = {
    * stretched. Absent means the default length. Never stored as undefined.
    */
   length?: number;
+  /**
+   * Custom only: the sticker's unscaled box in logical px, from its picture's
+   * shape when it was added. Absent on every other kind.
+   */
+  w?: number;
+  h?: number;
 };
 
 /** What the owner edits on a page. */
@@ -103,14 +109,27 @@ function isSticker(v: unknown): v is Sticker {
   const s = v as Sticker;
   return !!s && typeof s.id === 'string' && typeof s.kind === 'string' && typeof s.ref === 'string'
     && [s.x, s.y, s.rotation, s.scale, s.z].every((n) => typeof n === 'number')
-    && (s.length === undefined || typeof s.length === 'number');
+    && [s.length, s.w, s.h].every((n) => n === undefined || typeof n === 'number');
 }
 
-/** Stickers as stored: only the fields a sticker has, and no `length` key unless it was stretched. */
+/**
+ * Stickers as stored: only the fields a sticker has, no `length` key unless
+ * it was stretched, and no `w`/`h` unless it's one of the owner's own.
+ */
 export function stickersFromData(raw: unknown, layout: unknown): Sticker[] {
   const list: Sticker[] = (Array.isArray(raw) ? raw.filter(isSticker) : []).map(
-    ({ id, kind, ref, x, y, rotation, scale, z, length }: Sticker) =>
-      length === undefined ? { id, kind, ref, x, y, rotation, scale, z } : { id, kind, ref, x, y, rotation, scale, z, length },
+    ({ id, kind, ref, x, y, rotation, scale, z, length, w, h }: Sticker) => ({
+      id,
+      kind,
+      ref,
+      x,
+      y,
+      rotation,
+      scale,
+      z,
+      ...(length !== undefined && { length }),
+      ...(kind === 'custom' && w !== undefined && h !== undefined && { w, h }),
+    }),
   );
   return layout === LAYOUT ? list : toLayout2(list);
 }
