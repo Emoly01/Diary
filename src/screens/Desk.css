@@ -1105,9 +1105,105 @@
 .cabinet-mine {
   display: flex;
   flex-direction: column;
+  gap: 22px;
+}
+
+.cabinet-add,
+.cabinet-photos {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 14px;
   max-width: 520px;
+}
+
+.cabinet-photos {
+  padding-top: 18px;
+  border-top: 1px solid rgba(43, 31, 25, 0.2);
+}
+
+.cabinet-photos-heading,
+.cabinet-pack-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.cabinet-pack-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.cabinet-pack-count {
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.cabinet-pack-away {
+  min-height: var(--tap);
+  margin-left: auto;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  font-family: var(--font-label);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.cabinet-pack-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-style: italic;
+  color: var(--ink-body-soft);
+}
+
+.cabinet-grid-mine {
+  grid-template-columns: repeat(auto-fill, minmax(min(104px, 100%), 1fr));
+  gap: 12px 10px;
+}
+
+.cabinet-art-mine {
+  width: 100%;
+  height: 80px;
+}
+
+/* The owner's own stickers: the picture as it came, with the stickers' shadow. */
+.custom-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: var(--shadow-sticker);
+}
+
+.custom-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.custom-art-empty {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px dashed rgba(43, 31, 25, 0.25);
+  border-radius: 6px;
 }
 
 .cabinet-note {

@@ -18,6 +18,7 @@ boards are in `design/redesign/`; the pastel ones in `design/project/` are kept 
   the inkwell tray and the sticker cabinet), 27 watercolour stickers, word labels, mood moons and ten
   washi tapes that stretch, the 640 px page (older pages are converted when opened), and the new
   look for Catch, Pages, Settings, Sign in and Locked.
+- **Since then:** your own sticker packs in the cabinet's Mine drawer.
 
 ## Run it locally
 
@@ -110,6 +111,12 @@ after you fill in the real one.
     `+` and `-` resize it, and Delete or Backspace removes it.
 - Removing a photo added at the desk deletes the stored picture too. Removing the polaroid of a
   filed scrap keeps the picture, because the scrap still uses it.
+- **Your own stickers:** Mine → **Add stickers** takes a sticker pack's zip (or loose PNG, WebP,
+  GIF or JPEG pictures). Each sticker is stored in the book, behind the lock, as it came: PNG stays
+  PNG, so transparent edges stay transparent. Pictures over 800 px or ~300 KB are shrunk to WebP
+  (PNG where the browser can't write WebP). Packs are named after the zip's folder; adding the
+  same pack again adds nothing. **Put away** takes a pack out of the drawer, and pages that use
+  its stickers keep them.
 - Pasted image links must be `https`, and they're loaded with `referrerpolicy="no-referrer"`.
 - **On this day** reads `pages/{same date}` for each of the last ten years: one direct read per
   year, no query. Its cards open the page read-only (`/day/YYYY-MM-DD?read`).

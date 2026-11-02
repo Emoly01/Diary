@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CabinetIcon, MyStickersIcon, PhotoIcon } from '../components/Icons';
+import type { CustomSticker } from '../data/customStickers';
 import { PhotoError, preparePhoto, type PreparedPhoto } from '../data/photos';
 import Cabinet, { type CabinetTab } from './Cabinet';
 import { PRESETS, PresetArt } from './presets';
@@ -12,13 +13,17 @@ import { useRecentStickers } from './recent';
  * view, and the drawer closes so it can be seen.
  */
 export default function InkwellTray({
+  uid,
   onSticker,
   onWashi,
+  onCustom,
   onPhoto,
   onLink,
 }: {
+  uid: string;
   onSticker: (name: string) => void;
   onWashi: (name: string) => void;
+  onCustom: (s: CustomSticker) => void;
   onPhoto: (photo: PreparedPhoto) => void;
   onLink: (url: string) => void;
 }) {
@@ -66,11 +71,16 @@ export default function InkwellTray({
     <div className="inkwell" ref={root}>
       {drawer && (
         <Cabinet
+          uid={uid}
           tab={drawer}
           onTab={setDrawer}
           onSticker={sticker}
           onWashi={(n) => {
             onWashi(n);
+            close();
+          }}
+          onCustom={(c) => {
+            onCustom(c);
             close();
           }}
           onLink={(u) => {

@@ -101,16 +101,17 @@ users/{uid}
   scraps/{scrapId}       { text, mood?, photoId?, capturedAt, day, pageDay, createdAt }
   pages/{day}            { day, title, body, plainText, mood?, stickers[], scrapIds[],
                            wordCount, createdAt, updatedAt }
-  photos/{photoId}       { data, width, height, bytes, createdAt }
-  customStickers/{id}    { name, photoId, createdAt }
+  photos/{photoId}       { data, type?, width, height, bytes, createdAt }
+  customStickers/{id}    { name, pack, photoId, width, height, createdAt }
 ```
 
 - **`day`** is `YYYY-MM-DD` in the owner's timezone, with a rollover: anything before `dayStartsAt` (default 04:00) counts as the previous day. A scrap caught at 02:30 belongs to the day just lived, not the one starting.
 - **`mood`** is 1–5: rough, meh, okay, good, great.
 - **`pageDay`** is `null` while a scrap waits in the tray, and the page's day once it's filed. The tray query is `pageDay == null`, newest first. Add the composite index Firestore asks for.
 - **`body`** is TipTap JSON. `plainText` and `wordCount` are kept in sync on save, for search and the footer.
-- **`photos`** hold one compressed JPEG each as a base64 string in `data`, under \~700 KB encoded so the document stays below Firestore's 1 MiB cap. They sit in their own collection so the tray, archive and search never download image bytes. Fetch a photo only when it's on screen.
-- **`stickers[]`** items are `{ id, kind: "preset" | "washi" | "custom" | "photo" | "link", ref, x, y, rotation, scale, z, length? }`. `length` is a stretched washi tape's unscaled length in logical px; it is absent on every other sticker and on unstretched tape (REDESIGN.md). Pages carry `layout: 2` once their positions are on the 640 px page. `ref` is the preset name, a `photoId`, or the image URL for `link`. A filed scrap's photo becomes a `photo` sticker in a polaroid frame.
+- **`photos`** hold one compressed JPEG each as a base64 string in `data`, under \~700 KB encoded so the document stays below Firestore's 1 MiB cap. They sit in their own collection so the tray, archive and search never download image bytes. Fetch a photo only when it's on screen. A `photos` doc with a `type` (`image/png`, `image/webp`, `image/gif`) is a custom sticker's picture, kept as it came so its transparent edge survives; no `type` means JPEG.
+- **`customStickers`** are the owner's own stickers, added from the cabinet's Mine drawer as a sticker pack's zip or loose pictures. The id, which is also the picture's `photoId`, is `st-` plus a SHA-256 of the file, so the same pack added twice adds nothing. `pack` is the zip's folder (or the zip's name). Putting a pack away deletes its `customStickers` docs but keeps the pictures, for pages that use them.
+- **`stickers[]`** items are `{ id, kind: "preset" | "washi" | "custom" | "photo" | "link", ref, x, y, rotation, scale, z, length? }`. `length` is a stretched washi tape's unscaled length in logical px; it is absent on every other sticker and on unstretched tape (REDESIGN.md). `w` and `h` are a `custom` sticker's unscaled box in logical px (its picture's shape, the longer side 200 px); absent on every other kind. Pages carry `layout: 2` once their positions are on the 640 px page. `ref` is the preset name, a `photoId` (for `photo` and `custom`), or the image URL for `link`. A filed scrap's photo becomes a `photo` sticker in a polaroid frame.
 - **Fixed page width:** render the page at one logical width (960 px; 640 px since Phase 6, see REDESIGN.md) and scale it to fit the screen. Text then wraps the same on every device, and sticker `x`/`y` in logical px stay exactly where they were put.
 
 ## Screens & behaviour
@@ -174,7 +175,7 @@ There are five phases, built one at a time. Stop at the end of each so the owner
 5. **Memory:** On this day, the Pages archive, search, export.
    - Done when: a page seeded for 26 Oct 2025 in the emulator shows on 26 Oct 2026, and export downloads every scrap, page and photo.
 
-**Later, not now:** photo-to-sticker with background removal in the browser, uploading custom stickers, a gentle "4 scraps waiting" nudge, dark mode, more than one page per day.
+**Later, not now:** photo-to-sticker with background removal in the browser, a gentle "4 scraps waiting" nudge, dark mode, more than one page per day.
 
 ## Acceptance checks
 

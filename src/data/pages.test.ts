@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { countWords, emptyContent, pageFromData, plainTextOf, toLayout2, type Page, type Sticker } from './pages';
+import { countWords, emptyContent, pageFromData, plainTextOf, stickersFromData, toLayout2, type Page, type Sticker } from './pages';
 import { pickStart, readDraft, writeDraft, type Draft } from './drafts';
 
 const doc = {
@@ -94,5 +94,18 @@ describe('layout 2: the 640 px page', () => {
     writeDraft('u', '2026-10-29', first);
     expect(readDraft('u', '2026-10-29')!.stickers[0]).toMatchObject({ x: 320, y: 200, scale: 1 });
     vi.unstubAllGlobals();
+  });
+});
+
+describe('stickers as stored', () => {
+  it('keeps a custom sticker’s box, and drops one anywhere else', () => {
+    const raw = [
+      { id: 'c', kind: 'custom', ref: 'st-1', x: 1, y: 2, rotation: 0, scale: 1, z: 1, w: 200, h: 57, extra: 'no' },
+      { id: 'p', kind: 'preset', ref: 'star', x: 1, y: 2, rotation: 0, scale: 1, z: 2, w: 9, h: 9 },
+    ];
+    expect(stickersFromData(raw, 2)).toEqual([
+      { id: 'c', kind: 'custom', ref: 'st-1', x: 1, y: 2, rotation: 0, scale: 1, z: 1, w: 200, h: 57 },
+      { id: 'p', kind: 'preset', ref: 'star', x: 1, y: 2, rotation: 0, scale: 1, z: 2 },
+    ]);
   });
 });

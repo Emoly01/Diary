@@ -6,6 +6,7 @@ import {
   clampLength,
   clampPosition,
   clampScale,
+  customBox,
   newSticker,
   normaliseAngle,
   resizeWashi,
@@ -128,5 +129,21 @@ describe('stretching washi', () => {
     // At double scale the same pointer move adds half as much unscaled tape.
     expect(stretchWashi(tape({ scale: 2 }), 'end', 50, 0).length).toBe(195);
     near(ends(stretchWashi(flat, 'end', 50, 0)).start, ends(flat).start);
+  });
+});
+
+describe('the owner’s own stickers', () => {
+  it('take their picture’s shape, the longer side 200 px', () => {
+    expect(customBox(498, 143)).toEqual({ w: 200, h: 57 });
+    expect(customBox(250, 333)).toEqual({ w: 150, h: 200 });
+    expect(customBox(0, 0)).toEqual({ w: 110, h: 110 });
+  });
+
+  it('keep that box on the sticker, and only there', () => {
+    const c = newSticker('custom', 'st-1', { x: 320, y: 300 }, [], () => 0.5, { w: 200, h: 57 });
+    expect(c).toMatchObject({ kind: 'custom', ref: 'st-1', w: 200, h: 57, x: 220, y: 272 });
+    expect(baseSize(c)).toEqual({ w: 200, h: 57 });
+    expect(newSticker('preset', 'star', { x: 320, y: 300 }, [], () => 0.5, { w: 200, h: 57 })).not.toHaveProperty('w');
+    expect(baseSize({ kind: 'custom', ref: 'st-2' })).toEqual({ w: 110, h: 110 });
   });
 });

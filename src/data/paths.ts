@@ -8,3 +8,5 @@ export const scrapDoc = (uid: string, id: string) => doc(db, 'users', uid, 'scra
 export const photosCol = (uid: string) => collection(db, 'users', uid, 'photos');
 export const photoDoc = (uid: string, id: string) => doc(db, 'users', uid, 'photos', id);
 export const pageDoc = (uid: string, day: string) => doc(db, 'users', uid, 'pages', day);
+export const customStickersCol = (uid: string) => collection(db, 'users', uid, 'customStickers');
+export const customStickerDoc = (uid: string, id: string) => doc(db, 'users', uid, 'customStickers', id);

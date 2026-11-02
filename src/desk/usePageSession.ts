@@ -47,7 +47,13 @@ export type PageSession = {
   previewSticker: (s: Sticker) => void;
   /** Keep a sticker's new place, size or angle. */
   commitSticker: (s: Sticker) => void;
-  addSticker: (kind: Exclude<StickerKind, 'photo'>, ref: string, center: { x: number; y: number }) => void;
+  /** `box` is a custom sticker's unscaled size. */
+  addSticker: (
+    kind: Exclude<StickerKind, 'photo'>,
+    ref: string,
+    center: { x: number; y: number },
+    box?: { w: number; h: number },
+  ) => void;
   addPhoto: (photo: PreparedPhoto, center: { x: number; y: number }) => void;
   removeSticker: (id: string) => void;
   bringToFront: (id: string) => void;
@@ -276,9 +282,9 @@ export function usePageSession(
   const commitSticker = useCallback((s: Sticker) => update({ stickers: replace(clampPosition(s)) }), [update]);
 
   const addSticker = useCallback(
-    (kind: Exclude<StickerKind, 'photo'>, ref: string, center: { x: number; y: number }) => {
+    (kind: Exclude<StickerKind, 'photo'>, ref: string, center: { x: number; y: number }, box?: { w: number; h: number }) => {
       if (readOnly) return;
-      const s = newSticker(kind, ref, center, stickers());
+      const s = newSticker(kind, ref, center, stickers(), Math.random, box);
       update({ stickers: [...stickers(), s] });
       setSelected(s.id);
     },

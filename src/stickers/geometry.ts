@@ -11,8 +11,20 @@ export const MAX_WASHI_LENGTH = PAGE_WIDTH * 2;
 
 export const clampLength = (n: number) => Math.round(Math.min(MAX_WASHI_LENGTH, Math.max(MIN_WASHI_LENGTH, n)));
 
+/** A custom sticker added with no size on record: a square, as big as a preset. */
+export const CUSTOM_FALLBACK = 110;
+/** A custom sticker's longer side when it's first put on the page, in logical px. */
+export const CUSTOM_LONG_SIDE = 200;
+
+/** The unscaled box for one of the owner's own stickers: its picture's shape, the longer side 200 px. */
+export function customBox(width: number, height: number): { w: number; h: number } {
+  if (!(width > 0 && height > 0)) return { w: CUSTOM_FALLBACK, h: CUSTOM_FALLBACK };
+  const k = CUSTOM_LONG_SIDE / Math.max(width, height);
+  return { w: Math.round(width * k), h: Math.round(height * k) };
+}
+
 /** The unscaled box of a sticker, in logical px. */
-export function baseSize(s: { kind: StickerKind; ref: string; length?: number }): { w: number; h: number } {
+export function baseSize(s: { kind: StickerKind; ref: string; length?: number; w?: number; h?: number }): { w: number; h: number } {
   switch (s.kind) {
     case 'preset': {
       const p = presetFor(s.ref);
@@ -20,6 +32,8 @@ export function baseSize(s: { kind: StickerKind; ref: string; length?: number })
     }
     case 'washi':
       return { w: s.length ?? WASHI_LENGTH, h: WASHI_HEIGHT };
+    case 'custom':
+      return s.w && s.h ? { w: s.w, h: s.h } : { w: CUSTOM_FALLBACK, h: CUSTOM_FALLBACK };
     default:
       // Polaroid: 10 px frame, a 5:4 photo, a deeper bottom edge.
       return { w: 230, h: 212 };
@@ -93,7 +107,7 @@ const CASCADE = 36;
 /**
  * A new sticker centred on (cx, cy), with a slight tilt, on top of the rest.
  * If another sticker already sits there, it steps down and right so it
- * doesn't hide that one.
+ * doesn't hide that one. `box` is a custom sticker's unscaled size.
  */
 export function newSticker(
   kind: StickerKind,
@@ -101,8 +115,10 @@ export function newSticker(
   center: { x: number; y: number },
   stickers: Sticker[],
   random = Math.random,
+  box?: { w: number; h: number },
 ): Sticker {
-  const { w, h } = baseSize({ kind, ref });
+  const sized = kind === 'custom' && box ? { w: box.w, h: box.h } : {};
+  const { w, h } = baseSize({ kind, ref, ...sized });
   const tilt = kind === 'washi' ? (random() * 2 - 1) * 5 : (random() * 2 - 1) * 8;
   // Compare centres, so stickers of different sizes count as overlapping too.
   const mid = (s: Sticker) => ({ x: s.x + (baseSize(s).w * s.scale) / 2, y: s.y + (baseSize(s).h * s.scale) / 2 });
@@ -120,5 +136,6 @@ export function newSticker(
     rotation: normaliseAngle(tilt),
     scale: 1,
     z: topZ(stickers),
+    ...sized,
   });
 }
